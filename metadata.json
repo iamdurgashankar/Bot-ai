@@ -1,0 +1,6 @@
+{
+  "name": "BotAI - AI Chatbot Builder",
+  "description": "Build, deploy, and automate AI chatbots that learn from every conversation.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

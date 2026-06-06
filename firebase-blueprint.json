@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and subscription data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "plan": { "type": "string", "enum": ["free", "pro"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "plan"]
+    },
+    "Bot": {
+      "title": "Bot",
+      "description": "Chatbot configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "welcomeMessage": { "type": "string" },
+        "tone": { "type": "string" },
+        "context": { "type": "string" },
+        "knowledgeBase": { "type": "string" },
+        "themeColor": { "type": "string" },
+        "whatsappEnabled": { "type": "boolean" },
+        "telegramEnabled": { "type": "boolean" },
+        "telegramToken": { "type": "string" },
+        "profileImage": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "welcomeMessage", "tone", "context"]
+    },
+    "KnowledgeChunk": {
+      "title": "KnowledgeChunk",
+      "description": "A chunk of the knowledge base with its embedding",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "botId": { "type": "string" },
+        "content": { "type": "string" },
+        "embedding": { "type": "array", "items": { "type": "number" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["botId", "content", "embedding"]
+    },
+    "ChatSession": {
+      "title": "ChatSession",
+      "description": "A single conversation session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "botId": { "type": "string" },
+        "platform": { "type": "string", "enum": ["website", "whatsapp", "telegram"] },
+        "externalUserId": { "type": "string" },
+        "learnedContext": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["botId", "platform"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A single message in a chat session",
+      "type": "object",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "assistant", "system"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sessionId", "role", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/bots/{botId}": {
+      "schema": "Bot",
+      "description": "Bot configurations"
+    },
+    "/bots/{botId}/knowledge/{chunkId}": {
+      "schema": "KnowledgeChunk",
+      "description": "Knowledge base chunks"
+    },
+    "/bots/{botId}/sessions/{sessionId}": {
+      "schema": "ChatSession",
+      "description": "Chat sessions for a specific bot"
+    },
+    "/bots/{botId}/sessions/{sessionId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Messages within a session"
+    }
+  }
+}
