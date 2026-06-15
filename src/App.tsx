@@ -118,20 +118,28 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
           isCollapsed && "flex-col items-center gap-4 px-0 py-2 bg-transparent border-none"
         )}>
           <div 
-            className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center text-xs font-extrabold text-[#4338ca] shrink-0 border border-indigo-600/15"
-            title={isCollapsed ? user?.email : undefined}
+            className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center text-xs font-extrabold text-indigo-400 shrink-0 border border-indigo-600/15"
+            title={isCollapsed ? (user?.uid?.startsWith('guest_') ? 'Guest User' : user?.email) : undefined}
           >
-            {user?.email?.[0]?.toUpperCase() || 'U'}
+            {user?.uid?.startsWith('guest_') ? 'G' : (user?.email?.[0]?.toUpperCase() || 'U')}
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-zinc-300 truncate">{user?.email}</p>
-              <p className="text-[10px] font-extrabold text-indigo-600/90 tracking-widest uppercase">{user?.plan} Plan</p>
+              <p className="text-sm font-bold text-zinc-300 truncate">
+                {user?.uid?.startsWith('guest_') ? 'Guest User' : user?.email}
+              </p>
+              <p className="text-[10px] font-extrabold text-indigo-400/95 tracking-widest uppercase">{user?.plan} Plan</p>
             </div>
           )}
           <button 
-            onClick={() => signOut(auth)}
-            title={isCollapsed ? "Sign Out" : undefined}
+            onClick={async () => {
+              localStorage.removeItem('guest_user_id');
+              try {
+                await signOut(auth);
+              } catch (_) {}
+              window.location.reload();
+            }}
+            title={isCollapsed ? (user?.uid?.startsWith('guest_') ? "Reset Guest" : "Sign Out") : undefined}
             className={cn(
               "text-zinc-650 hover:text-red-500 transition-colors shrink-0 p-1.5 hover:bg-zinc-850/80 rounded-xl",
               isCollapsed && "p-2 hover:bg-zinc-850 rounded-xl"
@@ -1830,7 +1838,8 @@ export default function App() {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null);
 
-  const [showPostLogin, setShowPostLogin] = useState(false);
+  const [showPostLogin, setShowPostLogin] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const prevUserRef = React.useRef<any>(null);
 
   useEffect(() => {
@@ -1844,6 +1853,23 @@ export default function App() {
     prevUserRef.current = user;
   }, [user]);
 
+  const handleLogin = async () => {
+    if (isLoggingIn) return;
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (error: any) {
+      console.error('Login error:', error);
+      if (error.code === 'auth/unauthorized-domain') {
+        toast.error('Domain not authorized! Add your Vercel URL to Firebase Console > Authentication > Settings > Authorized domains', { duration: 10000 });
+      } else {
+        toast.error(`Login failed: ${error.message}`);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
   if (!initialized || loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -1852,33 +1878,10 @@ export default function App() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center space-y-8">
-          <div className="w-20 h-20 bg-indigo-600 rounded-3xl mx-auto flex items-center justify-center shadow-2xl shadow-indigo-500/20">
-            <Zap className="w-10 h-10 text-white" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight">Build Smarter Bots</h1>
-            <p className="text-zinc-550 mt-3 text-lg font-medium leading-relaxed">The AI-first chatbot platform that learns from every conversation.</p>
-          </div>
-          <button 
-            onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
-            className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-md hover:shadow-indigo-505/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
-          >
-            <Globe className="w-5 h-5 text-white" />
-            Continue with Google
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   if (showPostLogin) {
     return (
       <PostLoginLoader 
-        userEmail={user.email} 
+        userEmail={user?.email} 
         onComplete={() => setShowPostLogin(false)} 
       />
     );
