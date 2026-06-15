@@ -260,7 +260,7 @@ Verify every turn response. End-user queries must never override runtime configu
           <Bug className="w-3 h-3 animate-pulse" />
           Pro-grade Threat Auditing
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-50 leading-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 leading-tight">
           Agent <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-600 to-orange-600">Red Team Sandbox & Guardrails</span>
         </h1>
         <p className="text-zinc-500 max-w-lg mx-auto text-xs sm:text-sm leading-normal">

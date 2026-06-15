@@ -145,11 +145,14 @@ h1, h2, h3, h4 {
 
 /* Active tab button styles on Sidebar with indigo accent #4338ca */
 .bg-indigo-600\/10, 
-button[class*="bg-indigo-600/10"],
-.text-indigo-400 {
+button[class*="bg-indigo-600/10"] {
   background-color: rgba(67, 56, 202, 0.08) !important;
   color: #4338ca !important;
   border-color: rgba(67, 56, 202, 0.15) !important;
+}
+
+.text-indigo-400 {
+  color: #4338ca !important;
 }
 
 /* Preserve actual contrast for buttons & elements with dark primary backgrounds */
@@ -208,3 +211,236 @@ button[class*="text-zinc-500"] {
 button[class*="text-zinc-500"]:hover {
   color: #1e293b !important;
 }
+
+/* AI Chat Arena Specific High-Definition Overrides */
+/* 1. General contrast fixer for light/white layout - automatically darkens light text elements inside overridden light panels */
+div[class*="bg-[#0b141a]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#111b21]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#202c33]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#152026]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#1e2d35]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#1e2a30]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+div[class*="bg-[#121c22]"] .text-white:not(button):not([class*="bg-"]):not(.badge):not(.status-dot):not([class*="bg-[#005c4b]"]):not([class*="bg-[#312e81]"]):not([class*="bg-[#064e3b]"]):not([class*="bg-[#881337]"]):not([class*="bg-[#78350f]"]):not([class*="bg-[#581c87]"]),
+[class*="bg-[#202c33]"] div[class*="text-zinc-"] {
+  color: #1e293b !important;
+}
+
+[class*="bg-[#202c33]"] .text-zinc-100,
+[class*="bg-[#202c33]"] .text-zinc-200,
+[class*="bg-[#202c33]"] .text-zinc-300 {
+  color: #0f172a !important;
+}
+
+/* 2. Explicitly guard and preserve white text readability inside actual colored user/AI speech word bubbles */
+div[class*="bg-[#005c4b]"], div[class*="bg-[#005c4b]"] *,
+div[class*="bg-[#312e81]"], div[class*="bg-[#312e81]"] *,
+div[class*="bg-[#064e3b]"], div[class*="bg-[#064e3b]"] *,
+div[class*="bg-[#881337]"], div[class*="bg-[#881337]"] *,
+div[class*="bg-[#78350f]"], div[class*="bg-[#78350f]"] *,
+div[class*="bg-[#581c87]"], div[class*="bg-[#581c87]"] * {
+  color: #ffffff !important;
+}
+
+/* Enhance user speech speech bubbles background colors for high definition look in light theme */
+.bg-\[\#005c4b\]\/95, .bg-\[\#312e81\]\/95, .bg-\[\#064e3b\]\/95, .bg-\[\#881337\]\/95, .bg-\[\#78350f\]\/95, .bg-\[\#581c87\]\/95 {
+  background-color: #312e81 !important; /* Premium brand deep blue-indigo for crisp, clear light theme speech bubble container */
+  border-color: rgba(49, 46, 129, 0.1) !important;
+}
+
+/* 3. Extremely premium, modern aesthetics for the comparative model columns (Grid mode) */
+div.bg-\[\#202c33\].border-zinc-850,
+[class*="bg-[#202c33]"].border-zinc-850 {
+  background: #ffffff !important;
+  border: 1px solid rgba(67, 56, 202, 0.08) !important;
+  border-top: 4px solid #4338ca !important; /* Elegant signature indigo top highlight bar */
+  box-shadow: 0 10px 30px -8px rgba(67, 56, 202, 0.04) !important;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border-radius: 20px !important;
+}
+div.bg-\[\#202c33\].border-zinc-850:hover,
+[class*="bg-[#202c33]"].border-zinc-850:hover {
+  transform: translateY(-2.5px) !important;
+  box-shadow: 0 20px 40px -10px rgba(67, 56, 202, 0.09) !important;
+  border-color: rgba(67, 56, 202, 0.2) !important;
+}
+
+/* Make sure models names inside AI cards look highly crisp and bold */
+span.font-extrabold.text-blue-400, span.text-blue-400 {
+  color: #4338ca !important;
+  font-weight: 800 !important;
+}
+
+/* Markdown formatting within the response text elements */
+.prose-invert .markdown-body, 
+.prose-invert p, 
+.prose-invert li,
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3 {
+  color: #1e293b !important;
+}
+
+.prose-invert code {
+  color: #4338ca !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* 4. Chat Workspace Headers custom HD adjustments */
+div.bg-\[\#202c33\].border-\[\#222e35\],
+div.bg-\[\#121c22\]\/95 {
+  background: #ffffff !important;
+  border-bottom: 1.5px solid #e1e8ed !important;
+  box-shadow: 0 4px 18px -10px rgba(67, 56, 202, 0.05) !important;
+}
+
+/* 5. Subheader Control Action Buttons (Premium styles) */
+button.px-3.py-1\.5.bg-red-950\/25,
+button[class*="bg-red-950"] {
+  background-color: #fee2e2 !important; /* Soft premium red backdrop fill */
+  border: 1px solid #fecaca !important;
+  color: #ef4444 !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.04) !important;
+}
+button.px-3.py-1\.5.bg-red-950\/25:hover,
+button[class*="bg-red-950"]:hover {
+  background-color: #fca5a5 !important;
+  border-color: #f87171 !important;
+  color: #b91c1c !important;
+  transform: translateY(-0.5px);
+}
+
+/* Persona customized buttons default state */
+button.bg-zinc-850\/40,
+button[class*="bg-zinc-850\/40"] {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  border-radius: 12px !important;
+}
+button.bg-zinc-850\/40:hover,
+button[class*="bg-zinc-850\/40"]:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+  transform: translateY(-0.5px);
+}
+
+/* Drawers container fields block */
+div.bg-\[\#111b21\].border-b {
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* 6. Suggestion Questions Starter Prompt Cards */
+button.bg-\[\#111b21\]\/65 {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.02) !important;
+  border-radius: 16px !important;
+}
+button.bg-\[\#111b21\]\/65:hover {
+  border-color: #4338ca !important;
+  background: rgba(67, 56, 202, 0.015) !important;
+  box-shadow: 0 10px 20px -6px rgba(67, 56, 202, 0.06) !important;
+  transform: scale(1.01);
+}
+
+/* 7. Floating Chat Pill Bar & Interactive Inputs */
+div.bg-\[\#202c33\].rounded-full {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 6px 18px -6px rgba(67, 56, 202, 0.05) !important;
+  transition: all 0.25s ease !important;
+}
+div.bg-\[\#202c33\].rounded-full:focus-within {
+  border-color: #4338ca !important;
+  box-shadow: 0 0 0 3.5px rgba(67, 56, 202, 0.12) !important;
+}
+
+/* Attachment input button inside bottom section */
+button.text-zinc-400.hover\:text-white.mr-3 {
+  color: #64748b !important;
+  transition: color 0.2s ease;
+}
+button.text-zinc-400.hover\:text-white.mr-3:hover {
+  color: #4338ca !important;
+}
+
+/* Input type text inside bottom bar */
+div.bg-\[\#202c33\].rounded-full input[type="text"] {
+  color: #0f172a !important;
+  background-color: transparent !important;
+}
+
+/* Rephrase Optimization Sparkle button */
+button.bg-\[\#202c33\].border-zinc-800 {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #d97706 !important; /* Gold/amber sparkle representation */
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.05) !important;
+}
+button.bg-\[\#202c33\].border-zinc-800:hover {
+  background-color: #fef3c7 !important;
+  border-color: #fbf3d3 !important;
+  color: #b45309 !important;
+}
+
+/* Real-time split performance evaluation indicators (latency metrics bar) */
+div.bg-\[\#182229\]\/95 {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+}
+
+/* File uploading preview rail */
+div.bg-\[\#1e2d35\] {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+div.bg-\[\#1e2d35\] div.bg-\[\#2a3942\] {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+}
+div.bg-\[\#1e2d35\] div.bg-\[\#2a3942\] button {
+  color: #ef4444 !important;
+}
+
+/* Model Matrix selection list popup menu drawer container */
+div.bg-\[\#1e2a30\] {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08) !important;
+  border-radius: 14px !important;
+}
+div.bg-\[\#1e2a30\] button {
+  color: #334155 !important;
+}
+div.bg-\[\#1e2a30\] button:hover {
+  background-color: rgba(67, 56, 202, 0.04) !important;
+  color: #4338ca !important;
+}
+
+/* Contrast adjustment for custom labels and SVG icons to match the light theme background accurately */
+div#root:nth-of-type(1) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > form:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1) {
+  color: #475569 !important; /* Update "Purpose:" label color to dark slate grey */
+  font-weight: 800 !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > form:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(1) {
+  color: #475569 !important; /* Update "AI Models:" label color to dark slate grey */
+  font-weight: 800 !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > form:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > button:nth-of-type(1) > span:nth-of-type(1) {
+  color: #334155 !important; /* Premium dark slate grey for active selection label */
+  font-weight: 700 !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > svg:nth-of-type(1) {
+  color: #059669 !important; /* Update neon green Clock SVG icon to dark emerald emerald */
+}
+
+

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Model Arena | Strategic & Technical Specifications Suite</title>
+    <!-- Tailwind CSS (V4 Play) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+    </style>
+</head>
+<body class="bg-[#070709] text-gray-300 min-h-screen flex flex-col selection:bg-indigo-505/30 selection:text-white">
+
+    <!-- Top Glow Accent -->
+    <div class="h-[3px] bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 sticky top-0 z-50"></div>
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md sticky top-[3px] z-40 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center font-black text-white text-base shadow-lg shadow-indigo-600/15">
+                M
+            </div>
+            <div>
+                <h1 class="text-white font-extrabold text-sm tracking-tight">MULTI-MODEL DECISION ARENA</h1>
+                <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest font-mono">Strategic Specification Engine</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="px-2.5 py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-[9.5px] font-bold text-[#00e676] font-mono tracking-wider">
+                ● VERSION 2.4.0 (STABLE)
+            </span>
+            <a href="/" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20 active:scale-95">
+                Back to Application
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex-1 flex min-h-0 relative">
+
+        <!-- LEFT SIDEBAR: Index Outline & Filters -->
+        <aside class="w-80 shrink-0 border-r border-zinc-900 bg-zinc-950/50 hidden lg:flex flex-col h-[calc(100vh-75px)] sticky top-[73px] overflow-hidden select-none">
+            
+            <!-- Quick Filter & Search -->
+            <div class="p-5 border-b border-zinc-900 bg-zinc-950/70 space-y-4 shrink-0">
+                <div>
+                    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono block mb-1.5">Search Spec Index</span>
+                    <div class="relative">
+                        <input id="sidebar-search" type="text" placeholder="Filter specs by keyword..." 
+                               class="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl pl-3 pr-3 py-2 text-xs text-zinc-200 placeholder-zinc-650 outline-none focus:border-indigo-550 focus:bg-zinc-900 font-semibold transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono block mb-1.5">Strategic Category</span>
+                    <div class="flex flex-wrap gap-1">
+                        <button onclick="filterCategory('all')" id="cat-btn-all" class="px-2 py-1 rounded bg-indigo-600/10 border border-indigo-550/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer">All</button>
+                        <button onclick="filterCategory('product')" id="cat-btn-product" class="px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-850 text-zinc-500 hover:text-zinc-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer">Product</button>
+                        <button onclick="filterCategory('technical')" id="cat-btn-technical" class="px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-850 text-zinc-500 hover:text-zinc-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer">Tech</button>
+                        <button onclick="filterCategory('business')" id="cat-btn-business" class="px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-850 text-zinc-500 hover:text-zinc-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer">Business</button>
+                        <button onclick="filterCategory('governance')" id="cat-btn-governance" class="px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-850 text-zinc-500 hover:text-zinc-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer">Gov</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Outline Tracks -->
+            <nav id="nav-chapters" class="flex-1 overflow-y-auto p-3 space-y-1 bg-zinc-950/20">
+                <!-- Links will have data attributes for filtering -->
+                <a href="#ch1" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">1. Executive Summary</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Market pain points & fatigue cycles</p>
+                    </div>
+                </a>
+                <a href="#ch2" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">2. Product Vision</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Core mission, standard & USPs</p>
+                    </div>
+                </a>
+                <a href="#ch3" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">3. Market Analysis</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">SWOT & Competitors comparison</p>
+                    </div>
+                </a>
+                <a href="#ch4" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">4. Target Audience</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Cohort segments & use cases</p>
+                    </div>
+                </a>
+                <a href="#ch5" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">5. Core Feature Specifications</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Prompt tuning & Parallel tools</p>
+                    </div>
+                </a>
+                <a href="#ch6" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">6. End-to-End User Journeys</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Trial user paths to Enterprise pipelines</p>
+                    </div>
+                </a>
+                <a href="#ch7" data-cat="product" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">7. Detailed UI/UX Layouts</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Design system & screens geometry</p>
+                    </div>
+                </a>
+                <a href="#ch8" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">8. Technical Architecture</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Container layouts & proxy topologies</p>
+                    </div>
+                </a>
+                <a href="#ch9" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">9. AI Orchestration Pipeline</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Chronological thread worker loops</p>
+                    </div>
+                </a>
+                <a href="#ch10" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">10. Database Schema</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Drizzle definitions & indexes</p>
+                    </div>
+                </a>
+                <a href="#ch11" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">11. API Blueprint Reference</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Interactive endpoints sandbox</p>
+                    </div>
+                </a>
+                <a href="#ch12" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">12. Security & Compliance</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">AES key encryption & SOC2 tracks</p>
+                    </div>
+                </a>
+                <a href="#ch13" data-cat="technical" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-sky-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">13. High-Traffic Scaling Plan</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Throttles, Redis & Edge cache specs</p>
+                    </div>
+                </a>
+                <a href="#ch14" data-cat="business" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">14. Monetization Tiers</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Interactive MRR ROI Projection</p>
+                    </div>
+                </a>
+                <a href="#ch15" data-cat="business" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">15. GTM & Business Model</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Referral loops & marketing strategy</p>
+                    </div>
+                </a>
+                <a href="#ch16" data-cat="business" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">16. Analytics & Performance</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Metrics logging & cost buffers</p>
+                    </div>
+                </a>
+                <a href="#ch17" data-cat="business" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">17. Development Roadmap</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Phased schedule & deliverables list</p>
+                    </div>
+                </a>
+                <a href="#ch18" data-cat="governance" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">18. Risks & Mitigations</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Hallucinations & outages buffers</p>
+                    </div>
+                </a>
+                <a href="#ch19" data-cat="governance" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">19. Strategic Evolution</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">AI operating systems transition</p>
+                    </div>
+                </a>
+                <a href="#ch20" data-cat="governance" class="chapter-link group flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-zinc-900/60 border border-transparent hover:border-zinc-850/40">
+                    <div class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 opacity-80 shrink-0"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">20. Investment Case</h4>
+                        <p class="text-[10px] text-zinc-500 leading-normal mt-0.5">Recap, values & investor worksheets</p>
+                    </div>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- RIGHT MAIN FRAME: Documentation Details -->
+        <main class="flex-1 overflow-y-auto px-6 py-10 lg:px-14 bg-zinc-950">
+            <div class="max-w-4xl mx-auto space-y-16">
+
+                <!-- MAIN INTRO HEADER -->
+                <section class="border-b border-zinc-900 pb-10">
+                    <span class="text-xs font-extrabold font-mono text-indigo-500 uppercase tracking-widest block mb-1">STAKEHOLDER READY SPECIFICATIONS REPORT</span>
+                    <h2 class="text-white text-4xl font-extrabold tracking-tight mt-1 leading-tight">Interactive Strategy Specifications & Product Requirements Guide</h2>
+                    <p class="text-zinc-400 mt-4 text-base leading-relaxed">
+                        This unified HTML asset provides senior technology stakeholders, venture partners, and core engineering groups with a complete, production-grade guide of the 
+                        <strong>Multi-Model Decision Arena Platform</strong>. Discover comprehensive feature parameters, structural database designs, visual mockups blueprints, sandbox testing configurations, and interactive MRR return spreadsheets in order to rapidly scale this system.
+                    </p>
+                </section>
+
+                <!-- SECTION 1: Executive Summary -->
+                <section id="ch1" class="space-y-6 pt-4 border-t border-zinc-900/30">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">01 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">1. Executive Summary</h3>
+                    </div>
+                    
+                    <div class="bg-indigo-950/20 border border-indigo-900/40 rounded-2xl p-5 space-y-3">
+                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">Strategic Hypothesis</span>
+                        <p class="text-zinc-300 text-sm leading-relaxed">
+                            Single large language models excel on specialized dimensions but struggle consistently on others. The market is exhausted by manual tab fatigue, hopping back and forth across separate AI subscriptions to check outputs. Our solution introduces an <strong>intelligent coordination layer</strong> that automatically parallelizes queries, executes multi-criteria evaluator audits, and synthesizes optimal consolidated outputs automatically.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <h4 class="text-xs font-black text-white uppercase tracking-wider text-rose-400 font-mono">The Problem: Trial fatigue & Hallucination</h4>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Corporate teams spend hours auditing legal memos, coding syntax, and optimization models in multiple browser tabs, paying expensive monthly bills to separate providers without quantifiable indicators of quality.
+                            </p>
+                        </div>
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <h4 class="text-xs font-black text-white uppercase tracking-wider text-indigo-405 font-mono">The Solution: Decoupled Decision intelligence</h4>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                A clean, single-screen desktop interface. Users paste prompt blueprints, refine ambiguity using a local optimizer, broadcast requests concurrently across premier networks (Gemini, Claude, GPT), and receive visual delta reports.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: Product Vision -->
+                <section id="ch2" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">02 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">2. Product Vision & Value Propositions</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Our ultimate destination is the creation of an unbiased scientific standard for AI execution. We shift interaction layers from a single chatbot to an orchestrated, self-correcting array of models that checks and balances themselves.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-zinc-900/20 border border-zinc-850 p-4 rounded-xl text-center space-y-1">
+                            <span class="text-[10px] uppercase font-bold text-indigo-400 font-mono tracking-widest block">MISSION</span>
+                            <p class="text-[11px] text-zinc-300 font-medium">To democratize complex AI orchestration capabilities, optimizing token expenditure and accuracy metrics.</p>
+                        </div>
+                        <div class="bg-zinc-900/20 border border-zinc-850 p-4 rounded-xl text-center space-y-1">
+                            <span class="text-[10px] uppercase font-bold text-sky-400 font-mono tracking-widest block">Core USP</span>
+                            <p class="text-[11px] text-zinc-300 font-medium">Consensus merging algorithms that lower corporate hallucination rates by up to 34% with zero custom prompts configuration.</p>
+                        </div>
+                        <div class="bg-zinc-900/20 border border-zinc-850 p-4 rounded-xl text-center space-y-1">
+                            <span class="text-[10px] uppercase font-bold text-emerald-400 font-mono tracking-widest block">LONG-TERM PLG</span>
+                            <p class="text-[11px] text-zinc-300 font-medium">Shared comparison charts act as viral sign-up vectors for external builders looking to audit high-end outputs.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: Market Analysis -->
+                <section id="ch3" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">03 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">3. Market Analysis & Competitor Matrix</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Existing developer portals (like LMSYS Chatbot Arena) focus on static, post-facto blind audits with crowd-voted feedback. Standard clients require a <strong>real-time, transactional runtime environment</strong> to evaluate their direct private corporate payloads.
+                    </p>
+
+                    <!-- Competitor Matrix HTML -->
+                    <div class="overflow-x-auto border border-zinc-900 rounded-2xl">
+                        <table class="w-full text-left text-xs bg-zinc-950">
+                            <thead>
+                                <tr class="bg-zinc-900/80 border-b border-zinc-850">
+                                    <th class="p-3 font-bold text-white">Feature Metric</th>
+                                    <th class="p-3 font-bold text-indigo-400 font-mono">Our Decision Arena</th>
+                                    <th class="p-3 font-bold text-zinc-500">Typical Chatbots Subs</th>
+                                    <th class="p-3 font-bold text-zinc-500">LMSYS Arena Portal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-zinc-900/50">
+                                    <td class="p-3 font-bold text-white">Parallel Execution</td>
+                                    <td class="p-3 text-emerald-400 font-semibold font-mono">Instant (Multiplexed Workers)</td>
+                                    <td class="p-3 text-zinc-500">Single API only</td>
+                                    <td class="p-3 text-zinc-500">Static / Not interactive for user inputs</td>
+                                </tr>
+                                <tr class="border-b border-zinc-900/50">
+                                    <td class="p-3 font-bold text-white">AI Evaluator Judgement</td>
+                                    <td class="p-3 text-emerald-400 font-semibold font-mono font-medium">Automatic Scoring (5 Dimensions)</td>
+                                    <td class="p-3 text-zinc-500">None</td>
+                                    <td class="p-3 text-zinc-500">Human crowd votes only</td>
+                                </tr>
+                                <tr class="border-b border-zinc-900/50">
+                                    <td class="p-3 font-bold text-white">Consensus Merger AI</td>
+                                    <td class="p-3 text-emerald-400 font-semibold font-mono">Yes (Synthesized Output)</td>
+                                    <td class="p-3 text-zinc-500">None</td>
+                                    <td class="p-3 text-zinc-500">None</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-white">Compliance & Key Privacy</td>
+                                    <td class="p-3 text-emerald-400 font-semibold font-mono">AES-256 GCM Server key protection</td>
+                                    <td class="p-3 text-zinc-500">External cloud tracking</td>
+                                    <td class="p-3 text-zinc-500">Anonymized public shares</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: Target Audience -->
+                <section id="ch4" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">04 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">4. Target Audience & Cohort Segmentations</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-zinc-900/30 border border-zinc-900 rounded-2xl p-5 space-y-2">
+                            <span class="text-[9px] font-extrabold font-mono text-zinc-550 uppercase tracking-widest block">COHORT ALPHA</span>
+                            <h4 class="text-white text-xs font-bold">⌨ Developer & Devops Leads</h4>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Juggles conflicting syntax guides, testing regular expression engines and compiling database structures across Gemini, DeepSeek, and Anthropic. Benefits from automated multi-model code compiles.
+                            </p>
+                        </div>
+                        <div class="bg-zinc-900/30 border border-zinc-900 rounded-2xl p-5 space-y-2">
+                            <span class="text-[9px] font-extrabold font-mono text-zinc-550 uppercase tracking-widest block">COHORT BETA</span>
+                            <h4 class="text-white text-xs font-bold">🏢 Enterprise Administrators</h4>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Mandates clear audit trails of employee API expenditure logs, enforces security keys compliance, and blocks private company metadata leaks before sending payloads to vendors.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: Core Feature Specifications -->
+                <section id="ch5" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">05 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">5. Core Feature Specifications</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                <h4 class="text-xs font-extrabold text-white uppercase tracking-wider font-mono">A. Pre-Run Prompt Optimizer</h4>
+                            </div>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Analytically audits draft prompts before calling external servers. Scans for missing requirements (e.g. strict tone definitions, targeted language variables, or output format guidelines) and updates prompt structure instantly.
+                            </p>
+                        </div>
+
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <h4 class="text-xs font-extrabold text-white uppercase tracking-wider font-mono">B. AI Judge Grading Suite</h4>
+                            </div>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Secondary evaluators scoring outputs on 5 critical criteria: logic adherence, structural integrity, formatting validation, latency metrics, and hallucination indicators. Yields dynamic score indices.
+                            </p>
+                        </div>
+
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                                <h4 class="text-xs font-extrabold text-white uppercase tracking-wider font-mono">C. Consensus Merger AI Synthesis</h4>
+                            </div>
+                            <p class="text-xs text-zinc-450 leading-relaxed">
+                                Resolves internal code contradictions between different models. Identifies overlapping logical pillars, filters out model-specific marketing tags, and maps a cohesive final consensus recommendation block.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 6: End-to-End User Journeys -->
+                <section id="ch6" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">06 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">6. End-to-End User Journeys</h3>
+                    </div>
+
+                    <div class="space-y-6 text-xs font-semibold leading-relaxed">
+                        <div class="flex gap-4 items-start pb-5 border-b border-zinc-900">
+                            <div class="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 text-indigo-400 font-extrabold flex items-center justify-center shrink-0 font-mono">01</div>
+                            <div class="space-y-1">
+                                <h4 class="text-white text-xs font-bold uppercase tracking-wider">The Free Guest Validation Pipeline</h4>
+                                <p class="text-zinc-400"><strong>Trigger:</strong> Guest visits home domain, pastes a technical prompt, and checks basic models (GPT-4o mini, Gemini flash).</p>
+                                <p class="text-zinc-500"><strong>Result:</strong> Free concurrent compilation. Split-screen view opens. Sidebar alerts recommend upgrading to execute evaluations against DeepSeek Reasoning and Claude 3.5 Sonnet.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-900/20 border border-indigo-800/40 text-[#00e676] font-extrabold flex items-center justify-center shrink-0 font-mono">02</div>
+                            <div class="space-y-1">
+                                <h4 class="text-white text-xs font-bold uppercase tracking-wider">The Corporate Enterprise Audit workflow</h4>
+                                <p class="text-indigo-300"><strong>Trigger:</strong> Admin imports custom enterprise OpenAI and Anthropic API keys into settings and sets workspace budgets.</p>
+                                <p class="text-zinc-500"><strong>Result:</strong> Engineers launch compound prompts safely. Keys are processed behind express servers securely. Visual cost reports are emailed to the accounts pipeline automatically.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 7: Detailed UI/UX Layouts -->
+                <section id="ch7" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-500 text-xs font-bold font-mono bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase">07 / Product</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">7. Detailed UI/UX Screen Specifications</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Our styling follows an informative, highly-readable Swiss-dark layout prioritizing clear density. Zero gratuitous neon visual clutter.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                        <div class="p-4 bg-zinc-950 border border-zinc-900 rounded-xl space-y-2">
+                            <span class="text-indigo-400 font-bold uppercase font-mono tracking-wider block">Screen Alpha: Split Arena View</span>
+                            <p class="text-zinc-500 leading-relaxed">
+                                Side-by-side comparative panels with markdown layouts. Integrates latency charts, output token metrics, judge score badges (e.g. 9.1 / 10), and custom scroll-synchronized navigation tabs.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-zinc-950 border border-zinc-900 rounded-xl space-y-2">
+                            <span class="text-indigo-400 font-bold uppercase font-mono tracking-wider block">Screen Beta: Site Audit dashboard</span>
+                            <p class="text-zinc-500 leading-relaxed">
+                                Tabs covering SEO crawlers lists, Accessibility diagnostics cards (ARIA check), Conversion rate optimizers proposals, and clean UI diagrams describing layout inconsistencies.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 8: Technical Architecture -->
+                <section id="ch8" class="space-y-6 pt-4 border-t border-zinc-900/30">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">08 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">8. Technical Cloud Architecture</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        The application compiles a highly scalable, decoupled web server layout designed to scale to zero using containerized execution engines.
+                    </p>
+
+                    <!-- Flow Diagram -->
+                    <div class="bg-zinc-900/30 border border-zinc-900 rounded-2xl p-6 space-y-4">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-500 font-mono block">Decoupled Service Schema Topology</span>
+                        
+                        <div class="space-y-2 font-mono text-[11px] leading-relaxed">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-indigo-950 text-indigo-400 px-2 py-1 rounded border border-indigo-900">React Frontend</span>
+                                <span class="text-zinc-650">━━━[HTTPS REST/JSON]━━━▶</span>
+                                <span class="bg-zinc-900 text-zinc-300 px-2 py-1 rounded border border-zinc-805">Express API Router</span>
+                            </div>
+                            <div class="h-6 border-l border-zinc-800 ml-16 my-1"></div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-zinc-900 text-zinc-300 px-2 py-1 rounded border border-zinc-805 ml-10">Express API Router</span>
+                                <span class="text-zinc-650">━━[Worker Threads pool]━━▶</span>
+                                <span class="bg-emerald-950 text-emerald-400 px-2 py-1 rounded border border-emerald-900">Google GenAI Client SDK</span>
+                            </div>
+                            <div class="h-6 border-l border-zinc-800 ml-16 my-1"></div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-zinc-900 text-zinc-300 px-2 py-1 rounded border border-zinc-805 ml-10">Persistence DBs</span>
+                                <span class="text-zinc-650">◀━━[Drizzle Auth / Logging]━━━</span>
+                                <span class="bg-sky-950 text-sky-400 px-2 py-1 rounded border border-sky-900">Firestore & PostgreSQL pool</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 9: AI Orchestration Pipeline (INTERACTIVE) -->
+                <section id="ch9" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">09 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">9. AI Orchestration Pipeline</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Query multiplexing executes outgoing API requests asynchronously through node channels to dodge process blocks and slash user latencies.
+                    </p>
+
+                    <!-- Interactive Orchestration Widget -->
+                    <div class="bg-zinc-900/50 border border-zinc-850 rounded-2xl p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest font-mono">Interactive Thread Simulator</span>
+                            <span class="text-[10px] text-zinc-550 font-mono uppercase font-black" id="active-step-lbl">Current Stage: Pre-flight (0/4)</span>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-semibold font-mono">
+                            <button onclick="setPipelineStep(1)" class="pipe-ctrl p-2.5 rounded-xl border border-zinc-850 bg-zinc-955 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer">1. PROMPT SCAN</button>
+                            <button onclick="setPipelineStep(2)" class="pipe-ctrl p-2.5 rounded-xl border border-zinc-850 bg-zinc-955 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer">2. PARALLEL DISPATCH</button>
+                            <button onclick="setPipelineStep(3)" class="pipe-ctrl p-2.5 rounded-xl border border-zinc-850 bg-zinc-955 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer">3. JUDGE SCORE</button>
+                            <button onclick="setPipelineStep(4)" class="pipe-ctrl p-2.5 rounded-xl border border-zinc-850 bg-zinc-955 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer">4. CONSENSUS</button>
+                        </div>
+
+                        <div class="p-4 bg-zinc-950 border border-zinc-900 rounded-xl" id="pipeline-content-box">
+                            <p class="text-zinc-500 text-xs font-medium text-center py-2">Click on any pipeline button above to view thread logs and system workflows.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 10: Database Schema & INDEXING (COMPREHENSIVE DRIZZLE DEFINITIONS) -->
+                <section id="ch10" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">10 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">10. Database Schema & Indexing (Drizzle DSL)</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        To guarantee high query speed and enable persistent audit histories, we map relational Cloud SQL data schema maps. Below are the formal relational table types structured for our compiler.
+                    </p>
+
+                    <div class="bg-zinc-900/30 border border-zinc-900 rounded-2xl p-5 space-y-4 font-mono text-xs">
+                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block">src/db/schema.ts</span>
+
+                        <pre class="text-indigo-400 overflow-x-auto leading-relaxed bg-zinc-950 p-4 border border-zinc-905 rounded-xl text-[10.5px]"><code>import { pgTable, uuid, varchar, text, integer, timestamp, pgEnum, doublePrecision } from "drizzle-orm/pg-core";
+
+export const planEnum = pgEnum("plan_tier", ["free", "pro", "enterprise"]);
+
+// Users persistence table
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  plan: planEnum("plan_tier").default("free").notNull(),
+  apiCreditAllowance: integer("api_credit_allowance").default(500000).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});
+
+// Chats conversations table
+export const conversations = pgTable("conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  rawPrompt: text("raw_prompt").notNull(),
+  optimizedPrompt: text("optimized_prompt").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});
+
+// Dynamic AI Responses with judge scores
+export const aiResponses = pgTable("ai_responses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id").references(() => conversations.id).notNull(),
+  modelProvider: varchar("model_provider", { length: 100 }).notNull(),
+  outputText: text("output_text").notNull(),
+  judgeScore: doublePrecision("judge_score").notNull(),
+  latencyMs: integer("latency_ms").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});</code></pre>
+
+                        <div class="p-3 bg-zinc-950 rounded-lg border border-zinc-850">
+                            <span class="text-[9px] uppercase font-bold text-zinc-450 tracking-wider">Indexing Optimization Strategy</span>
+                            <div class="text-[10px] text-zinc-400 mt-1 leading-normal font-sans">
+                                We place a <strong>unique composite key index</strong> on <span class="font-mono text-zinc-200">id, user_id</span> and a <strong>foreign key hash mapping</strong> on <span class="font-mono text-zinc-200">conversation_id</span>. This trims the execution latency of complex historic query fetches to less than 4ms.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 11: API Reference (INTERACTIVE) -->
+                <section id="ch11" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">11 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">11. API Blueprint Reference</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Expose standard JSON endpoints to enable automated integration pipelines for external clients and server groups.
+                    </p>
+
+                    <!-- Interactive API Play area -->
+                    <div class="bg-zinc-900/40 border border-zinc-850 rounded-2xl p-6 space-y-4 font-mono text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block">Interactive Endpoint Terminal</span>
+                            <span class="text-[9.5px] bg-[#00e676]/10 text-[#00e676] px-1.5 py-0.5 border border-[#00e676]/20 rounded font-bold">X-API-KEY CONNECTED</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Input Panel -->
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="text-[9px] uppercase font-bold text-zinc-550 block mb-1">Target Endpoint</span>
+                                    <div class="bg-zinc-950 px-2 py-1.5 rounded-lg border border-zinc-900 text-[10.5px] flex items-center justify-between">
+                                        <span class="text-emerald-450 font-bold">POST</span>
+                                        <span class="text-zinc-400 font-semibold">/api/v1/arena/compare</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] uppercase font-bold text-zinc-550 block mb-1">JSON Payload Draft</span>
+                                    <textarea id="api-req-arg" rows="6" class="w-full bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 text-indigo-400 outline-none focus:border-indigo-550 text-[10px] leading-relaxed resize-none font-semibold">
+{
+  "prompt": "Optimize a standard binary search",
+  "models": ["gemini-pro-2", "gpt-4o", "claude-haiku"],
+  "consensus": true
+}</textarea>
+                                </div>
+                                <button onclick="triggerSandboxPost()" class="w-full py-2.5 bg-indigo-650 hover:bg-indigo-550 text-white font-bold tracking-widest uppercase text-[10px] rounded-xl transition-all shadow-md cursor-pointer active:scale-95">
+                                    Send Mock Payload
+                                </button>
+                            </div>
+
+                            <!-- Output Panel -->
+                            <div class="space-y-1">
+                                <span class="text-[9px] uppercase font-bold text-zinc-550 block mb-1">Mock Router Output Response</span>
+                                <div class="bg-zinc-950 border border-zinc-900 rounded-xl p-3 h-[210px] overflow-y-auto leading-relaxed text-indigo-400 text-[10px]" id="api-output-terminal">
+                                    <p class="text-zinc-650 leading-normal italic text-center py-10 font-sans">No request dispatched yet. Click Send above.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 12: Security & Compliance -->
+                <section id="ch12" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">12 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">12. Security & Compliance Safeguards</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-zinc-900/40 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <h4 class="text-xs font-bold text-white uppercase font-mono tracking-wider text-emerald-450">🛡️ SOC2 compliance Ready</h4>
+                            <p class="text-xs text-zinc-455 leading-relaxed font-semibold">
+                                System locks down employee key repositories using AES-255 GCM symmetric keys. Operational logs strip out PII variables before exporting payloads to multi-model providers.
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 border border-zinc-900 p-5 rounded-2xl space-y-2">
+                            <h4 class="text-xs font-bold text-white uppercase font-mono tracking-wider text-indigo-400">⚡ API Rate Controllers</h4>
+                            <p class="text-xs text-zinc-455 leading-relaxed font-semibold">
+                                Integrated Redis limits keep guest queries at 15 queries per hour. Enterprise keys scale based on central tenant tiers automatically to suppress DDoS vulnerabilities.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 13: High-Traffic Scaling Plan -->
+                <section id="ch13" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-500 text-xs font-bold font-mono bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded uppercase">13 / Technical</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">13. High-Traffic Scaling Plan</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed font-medium">
+                        Express servers run within Docker containers orchestrated by Google Cloud Run. Scale triggers are set to spawn new instances whenever active concurrent socket loads breach 250 requests per server node.
+                    </p>
+
+                    <div class="bg-zinc-900/30 border border-zinc-900 rounded-2xl p-5 space-y-2">
+                        <span class="text-[9px] uppercase font-bold text-indigo-400 font-mono tracking-widest block">Redis caching logic</span>
+                        <p class="text-xs text-zinc-450 leading-relaxed">
+                            A global cache layer checks incoming sha256 checksums of raw prompt requests. Whenever they match an active historical record compiled in the last 18 minutes, the system serves the cached result directly, saving up to 80% on backend API model costs.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- SECTION 14: Monetization Tiers (INTERACTIVE CALCULATOR) -->
+                <section id="ch14" class="space-y-6 pt-4 border-t border-zinc-900/30">
+                    <div class="flex items-center gap-2">
+                        <span class="text-emerald-500 text-xs font-bold font-mono bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase">14 / Business</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">14. Monetization Tiers & ROI Simulator</h3>
+                    </div>
+
+                    <!-- Interactive Business Calculator Widget -->
+                    <div class="bg-zinc-900/50 border border-zinc-850 rounded-3xl p-6 md:p-8 space-y-6">
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest font-mono block mb-1">Interactive ROI & MRR Business Calculator</span>
+                            <p class="text-xs text-zinc-500">Drag sliders below to evaluate customer acquisition revenue grids versus external API pricing metrics.</p>
+                        </div>
+
+                        <!-- Grid values feedback -->
+                        <div class="grid grid-cols-3 gap-4 text-center border-b border-zinc-850 pb-4">
+                            <div>
+                                <span class="text-[9px] uppercase font-extrabold text-zinc-500 block">Total Active Users</span>
+                                <div id="mrr-val-users" class="text-xl font-black text-white mt-1">25,000</div>
+                            </div>
+                            <div>
+                                <span class="text-[9px] uppercase font-extrabold text-zinc-500 block">Pro Conversion Tiers</span>
+                                <div id="mrr-val-split" class="text-xl font-black text-indigo-400 mt-1">25%</div>
+                            </div>
+                            <div>
+                                <span class="text-[9px] uppercase font-extrabold text-zinc-500 block">External API Cost / query</span>
+                                <div id="mrr-val-rate" class="text-xl font-black text-emerald-450 mt-1">$0.0050</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-5">
+                            <!-- Users slider -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-zinc-450">Active Monthly Users (MAUs):</span>
+                                    <span id="label-users" class="text-white font-mono">25,000 users</span>
+                                </div>
+                                <input id="slider-users" type="range" min="1000" max="150000" step="1000" value="25000" oninput="runFinancialSim()"
+                                       class="w-full h-1.5 bg-zinc-950 rounded-lg appearance-none cursor-pointer accent-indigo-505">
+                            </div>
+
+                            <!-- Pro Split Slider -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-zinc-450">Pro subscription conversion rate:</span>
+                                    <span id="label-split" class="text-indigo-400 font-mono">25% subscribers</span>
+                                </div>
+                                <input id="slider-split" type="range" min="2" max="65" step="1" value="25" oninput="runFinancialSim()"
+                                       class="w-full h-1.5 bg-zinc-950 rounded-lg appearance-none cursor-pointer accent-indigo-505">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs font-semibold">
+                            <div class="bg-zinc-950 border border-zinc-900 p-4 rounded-xl space-y-1">
+                                <span class="text-[8.5px] uppercase font-bold text-zinc-500 tracking-wider font-mono">PROJECTED REVENUE (MRR)</span>
+                                <div id="out-mrr" class="text-base font-extrabold text-white">$181,250 / mo</div>
+                            </div>
+                            <div class="bg-zinc-950 border border-zinc-900 p-4 rounded-xl space-y-1">
+                                <span class="text-[8.5px] uppercase font-bold text-zinc-500 tracking-wider font-mono">ESTIMATED API COST</span>
+                                <div id="out-cost" class="text-base font-extrabold text-red-400">$5,250 / mo</div>
+                            </div>
+                            <div class="bg-zinc-955 border border-zinc-900 p-4 rounded-xl space-y-1">
+                                <span class="text-[8.5px] uppercase font-bold text-zinc-500 tracking-wider font-mono">PROJECTED PROFIT</span>
+                                <div id="out-profit" class="text-base font-extrabold text-emerald-450">$176,000 / mo</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 15: GTM & Business Model -->
+                <section id="ch15" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-emerald-500 text-xs font-bold font-mono bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase">15 / Business</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">15. GTM & Business Model</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed font-semibold">
+                        GTM pivots primarily on a <strong>Product Led Growth (PLG)</strong> model. Whenever users share optimized prompt blueprints or compare-logs with outside colleagues, a high-contrast guest modal prompts the viewer to log in and access higher models.
+                    </p>
+
+                    <!-- PLG Diagram -->
+                    <div class="p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl">
+                        <span class="text-[9.5px] uppercase font-bold font-mono tracking-widest text-zinc-550 block mb-3">The Virality Loop</span>
+                        <div class="flex flex-col md:flex-row items-center gap-2 justify-between text-xs font-semibold font-mono">
+                            <span class="bg-zinc-950 px-2.5 py-1.5 border border-zinc-850 rounded">User Runs Evaluation</span>
+                            <span class="text-indigo-400">▶</span>
+                            <span class="bg-zinc-950 px-2.5 py-1.5 border border-zinc-850 rounded">Shares Delta Link</span>
+                            <span class="text-indigo-400">▶</span>
+                            <span class="bg-indigo-950/20 text-indigo-400 px-2.5 py-1.5 border border-indigo-900/40 rounded">Recipient Views</span>
+                            <span class="text-indigo-400">▶</span>
+                            <span class="bg-emerald-950/30 text-[#00e676] px-2.5 py-1.5 border border-[#00e676]/20 rounded">Instant conversion</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 16: Analytics & Performance -->
+                <section id="ch16" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-emerald-500 text-xs font-bold font-mono bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase">16 / Business</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">16. Analytics & Intelligence Systems</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-1.5 text-xs font-semibold">
+                            <span class="text-indigo-400 uppercase tracking-widest block font-mono text-[9px]">Model latency charts</span>
+                            <p class="text-zinc-500 leading-relaxed font-sans">
+                                High-speed analytics dashboards tracking token sizes, incoming network speeds, and latency graphs to dynamically route payloads to faster servers.
+                            </p>
+                        </div>
+                        <div class="p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-1.5 text-xs font-semibold">
+                            <span class="text-indigo-400 uppercase tracking-widest block font-mono text-[9px]">Operational cost analytics</span>
+                            <p class="text-zinc-500 leading-relaxed font-sans">
+                                Granular trackers logging individual client tokens consumption in order to compile neat finance metrics sheets.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 17: Development Roadmap -->
+                <section id="ch17" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-emerald-500 text-xs font-bold font-mono bg-emerald-500/10 border border-emerald-505/20 px-2 py-0.5 rounded uppercase">17 / Business</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">17. Strategic Development Roadmap</h3>
+                    </div>
+
+                    <div class="space-y-4 text-xs font-semibold leading-relaxed">
+                        <div class="border-l-2 border-indigo-650 pl-4 py-1.5">
+                            <span class="text-[9px] uppercase font-bold text-zinc-550 font-mono tracking-wider block">PHASE 1: Core Foundation (Month 1-2)</span>
+                            <h4 class="text-white font-bold text-xs mt-0.5">Arena Interface & Multiplexing Channel</h4>
+                            <p class="text-zinc-500 leading-relaxed mt-1">
+                                Complete side-by-side comparison interfaces. Interconnect core Gemini, GPT-4o, and Claude models. Establish initial evaluation scoring logs.
+                            </p>
+                        </div>
+
+                        <div class="border-l-2 border-[#1f1f25] pl-4 py-1.5">
+                            <span class="text-[9px] uppercase font-bold text-zinc-550 font-mono tracking-wider block">PHASE 2: Intelligence features (Month 3-4)</span>
+                            <h4 class="text-white font-bold text-xs mt-0.5">Consensus Merger Engine & Keys Security</h4>
+                            <p class="text-zinc-550 leading-relaxed mt-1">
+                                Launch prompt optimizers, dynamic consensus blending trees, and AES-256 GCM client settings dashboards.
+                            </p>
+                        </div>
+
+                        <div class="border-l-2 border-[#1f1f25] pl-4 py-1.5">
+                            <span class="text-[9px] uppercase font-bold text-zinc-550 font-mono tracking-wider block">PHASE 3: Audit expansion (Month 5-6)</span>
+                            <h4 class="text-white font-bold text-xs mt-0.5">Site Auditor & Screenshot compilation</h4>
+                            <p class="text-zinc-550 leading-relaxed mt-1">
+                                Launch automatic web crawler auditors, accessibility rating, design screenshot elements parsing, and mock sandboxes.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 18: Risks & Mitigations -->
+                <section id="ch18" class="space-y-6 pt-4 border-t border-zinc-900/30">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-500 text-xs font-bold font-mono bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded uppercase">18 / Governance</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">18. Operational Risks & Mitigations</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed font-semibold">
+                        Identify potential system failures early and compile clear fallbacks.
+                    </p>
+
+                    <div class="space-y-3 font-semibold text-xs leading-relaxed">
+                        <div class="p-4 bg-zinc-900/30 border border-zinc-900 rounded-xl flex gap-3">
+                            <span class="text-red-400 shrink-0 select-none">⚠</span>
+                            <div>
+                                <h4 class="text-white uppercase text-[10px] tracking-wider block font-mono">Downtime of provider endpoints</h4>
+                                <p class="text-zinc-500 mt-1">Mitigate by utilizing connection timeout boundaries. Whenever a model fails to reply in 4600ms, abort the branch and return clean indicators of system status.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-zinc-900/30 border border-zinc-900 rounded-xl flex gap-3">
+                            <span class="text-red-400 shrink-0 select-none">⚠</span>
+                            <div>
+                                <h4 class="text-white uppercase text-[10px] tracking-wider block font-mono font-medium">Accumulation of API expenses</h4>
+                                <p class="text-zinc-505 mt-1">Mitigate by implementing automated user-specific budget limits, coupled with dynamic caching protocols to minimize outgoing token loads.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 19: Strategic Evolution -->
+                <section id="ch19" class="space-y-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-500 text-xs font-bold font-mono bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded uppercase">19 / Governance</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">19. Strategic Evolution Plan</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        In order to future-proof this platform, our architecture is built to support local model execution. High-performance browser-based models can compile minor tasks directly on user hardware, moving server-side calculations exclusively to expensive premium request lines.
+                    </p>
+                </section>
+
+                <!-- SECTION 20: Conclusion & Investment Summary -->
+                <section id="ch20" class="space-y-6 pb-20">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-500 text-xs font-bold font-mono bg-amber-505/10 border border-amber-500/20 px-2 py-0.5 rounded uppercase">20 / Governance</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">20. Conclusion & Business Investment Case</h3>
+                    </div>
+
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Operating at the nexus of the LLM explosion, our decision platform decouples accuracy from single-vendor lock-in. By granting modern businesses a scientific, auditable layer to run, evaluate, grade, and synthesize results, we are primed to capitalize on enterprise tool optimization trends.
+                    </p>
+
+                    <div class="bg-gradient-to-tr from-indigo-950/20 to-purple-950/10 border border-indigo-900/30 p-5 rounded-2xl text-center space-y-2">
+                        <span class="text-[#00e676] font-black tracking-widest uppercase font-mono text-[9px] block">★ INVESTMENT STAGE ACTIVE</span>
+                        <h4 class="text-white text-sm font-bold uppercase tracking-wide leading-tight">Join Our Journey to Define Clean AI Standards</h4>
+                        <p class="text-xs text-zinc-400 max-w-lg mx-auto leading-relaxed">
+                            For seed funding schedules, equity participation worksheets, and operational pipeline presentations boards, contact our core committee at <span class="text-indigo-400 underline font-mono">founders@multimodelarena.co</span>.
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- JS Core Logic -->
+    <script>
+        // Sidebar filtering logic
+        function filterCategory(cat) {
+            // Update active buttons styling
+            const btnIds = ['all', 'product', 'technical', 'business', 'governance'];
+            btnIds.forEach(id => {
+                const btn = document.getElementById('cat-btn-' + id);
+                if (id === cat) {
+                    btn.className = 'px-2 py-1 rounded bg-indigo-600/10 border border-indigo-550/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer';
+                } else {
+                    btn.className = 'px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-850 text-zinc-500 hover:text-zinc-300 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer';
+                }
+            });
+
+            // Filter the anchor items
+            const links = document.querySelectorAll('.chapter-link');
+            links.forEach(lnk => {
+                const lnkCat = lnk.getAttribute('data-cat');
+                if (cat === 'all' || lnkCat === cat) {
+                    lnk.style.display = 'flex';
+                } else {
+                    lnk.style.display = 'none';
+                }
+            });
+        }
+
+        // Search bar filtering logic
+        document.getElementById('sidebar-search').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const links = document.querySelectorAll('.chapter-link');
+            links.forEach(lnk => {
+                const text = lnk.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    lnk.style.display = 'flex';
+                } else {
+                    lnk.style.display = 'none';
+                }
+            });
+        });
+
+        // Financial ROI Simulation Logic
+        function runFinancialSim() {
+            const users = parseInt(document.getElementById('slider-users').value);
+            const proSplit = parseInt(document.getElementById('slider-split').value) / 100;
+            const apiUnitCost = 0.0050; // average API cost per query
+
+            // Update on-screen sliders labels
+            document.getElementById('label-users').innerText = users.toLocaleString() + ' users';
+            document.getElementById('label-split').innerText = (proSplit * 100).toFixed(0) + '% subscribers';
+
+            // Calculate business outputs
+            const proUsersCount = Math.floor(users * proSplit);
+            const mrr = proUsersCount * 29; // Pro plan average is $29/mo
+            const avgQueriesPerMonth = users * 42; // users do average of 42 comparison queries
+            const apiSpend = avgQueriesPerMonth * apiUnitCost;
+            const profit = mrr - apiSpend - 1500; // deduct background hosting operations costs ($1500)
+
+            // Update interface numbers
+            document.getElementById('mrr-val-users').innerText = users.toLocaleString();
+            document.getElementById('mrr-val-split').innerText = (proSplit * 100).toFixed(0) + '%';
+            
+            document.getElementById('out-mrr').innerText = '$' + mrr.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / mo';
+            document.getElementById('out-cost').innerText = '$' + apiSpend.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / mo';
+            document.getElementById('out-profit').innerText = '$' + (profit > 0 ? profit : 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / mo';
+        }
+
+        // Orchestration steps interactive widget
+        function setPipelineStep(step) {
+            const lbl = document.getElementById('active-step-lbl');
+            const box = document.getElementById('pipeline-content-box');
+
+            const content = {
+                1: {
+                    title: "🎯 Step 1: Pre-Run Optimization & Ambiguity Checks",
+                    logs: [
+                        "INFO [00.02s]: Received raw prompt draft payload from WebSocket connection...",
+                        "INFO [00.12s]: Dispatching query syntax checker algorithms...",
+                        "WARN [00.41s]: Ambiguity warning: missing precise target programming language variables definitions.",
+                        "INFO [00.55s]: Applying optimization prompts schema metrics.",
+                        "SUCCESS [00.72s]: Optimized prompt compiler output updated cleanly!"
+                    ]
+                },
+                2: {
+                    title: "⚡ Step 2: Multiplexed Concurrent Dispatch Channels",
+                    logs: [
+                        "INFO [00.01s]: Initializing parallel dispatch channels thread pools...",
+                        "INFO [00.08s]: Channel 1 firing outgoing payload payload to OpenAI API nodes...",
+                        "INFO [00.10s]: Channel 2 firing outgoing payload to Anthropic API endpoint...",
+                        "INFO [00.11s]: Channel 3 firing outgoing payload to Google Gemini API servers...",
+                        "INFO [01.22s]: OpenAI stream received successfully (244 words, latency: 1210ms)",
+                        "INFO [01.55s]: Google Gemini payload parsed successfully (295 words, latency: 1515ms)",
+                        "INFO [01.90s]: Anthropic route output completed completely (220 words, latency: 1890ms)"
+                    ]
+                },
+                3: {
+                    title: "🥇 Step 3: AI Judge Evaluates Logic Completeness",
+                    logs: [
+                        "INFO [00.02s]: Triggering judge evaluator models...",
+                        "INFO [00.18s]: Calculating syntax correctness score on 0.00-10.00 limits...",
+                        "INFO [00.41s]: Claude output ranked #1 for structure rules and constraints accuracy (Grade: 9.2)",
+                        "INFO [00.60s]: GPT ranked #2 with high readability indicators (Grade: 8.8)",
+                        "INFO [00.82s]: Gemini rated #3 (Grade: 7.9) due to slight structural boilerplate repetitions.",
+                        "SUCCESS [01.02s]: Judge analytical reports saved into Cloud SQL databases pool successfully."
+                    ]
+                },
+                4: {
+                    title: "⚙️ Step 4: Consensus Synthesis & Merging",
+                    logs: [
+                        "INFO [00.01s]: Parsing individual raw response markdown bodies...",
+                        "INFO [00.18s]: Mapping contradictory variables allocations patterns...",
+                        "INFO [00.34s]: Standardizing compilation formatting variables maps to match drizzle schemas...",
+                        "INFO [00.52s]: Compiling blended consensus markdown proposal draft text...",
+                        "SUCCESS [00.75s]: Unified consensus code block completed. Dispatching clean JSON to web socket clients!"
+                    ]
+                }
+            };
+
+            const data = content[step];
+            lbl.innerText = "Current Stage: Active (0" + step + "/4)";
+
+            let logHtml = '<p class="text-indigo-400 font-extrabold text-[11px] mb-2 uppercase tracking-wide">' + data.title + '</p>';
+            logHtml += '<div class="space-y-1 font-mono text-[9.5px] leading-relaxed text-zinc-400">';
+            data.logs.forEach(log => {
+                if (log.includes('SUCCESS')) {
+                    logHtml += '<div class="text-[#00e676] font-bold">' + log + '</div>';
+                } else if (log.includes('WARN')) {
+                    logHtml += '<div class="text-amber-400 font-bold">' + log + '</div>';
+                } else {
+                    logHtml += '<div>' + log + '</div>';
+                }
+            });
+            logHtml += '</div>';
+
+            box.innerHTML = logHtml;
+        }
+
+        // API sandbox simulation
+        function triggerSandboxPost() {
+            const terminal = document.getElementById('api-output-terminal');
+            const payloadText = document.getElementById('api-req-arg').value;
+            
+            let parsedPayload;
+            try {
+                parsedPayload = JSON.parse(payloadText);
+            } catch (e) {
+                terminal.innerHTML = '<span class="text-rose-400 font-bold">[JSON SCHEMA ERROR]: Could not parse manual input. Check quotes and commas!</span>';
+                return;
+            }
+
+            terminal.innerHTML = '<span class="text-zinc-550 italic font-sans flex items-center justify-center py-10">Compiling sandbox API response streams...</span>';
+
+            setTimeout(() => {
+                const responseObj = {
+                    "status": "success",
+                    "requestId": "req_sandbox_arena_5a7bc",
+                    "timestamp": new Date().toISOString(),
+                    "inputPromptAnalyzed": parsedPayload.prompt || "Default binary search query",
+                    "modelsEvaluated": parsedPayload.models || ["gemini-pro-2", "gpt-4o", "claude-haiku"],
+                    "aiJudgeScoreboard": {
+                        "winner": "gpt-4o",
+                        "consensusApplied": parsedPayload.consensus !== false,
+                        "scores": {
+                            "gpt-4o": { "syntax": 9.4, "clarity": 9.0, "latencyMs": 1120 },
+                            "gemini-pro-2": { "syntax": 8.8, "clarity": 8.5, "latencyMs": 950 },
+                            "claude-haiku": { "syntax": 9.2, "clarity": 8.9, "latencyMs": 1410 }
+                        }
+                    },
+                    "synthesisConsensusOutput": "### Consolidated Solution\n1. Use standard pointers tracking left and right boundaries.\n2. Prevent memory overflow vulnerabilities when calculating midpoint by writing `mid = left + Math.floor((right - left) / 2)`."
+                };
+
+                terminal.innerHTML = '<pre class="text-zinc-300 leading-normal font-mono">' + JSON.stringify(responseObj, null, 2) + '</pre>';
+            }, 600);
+        }
+
+        // Run initial calculations on load
+        window.addEventListener('DOMContentLoaded', () => {
+            runFinancialSim();
+        });
+    </script>
+</body>
+</html>

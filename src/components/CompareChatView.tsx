@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Bot as BotIcon, 
+  Settings,
   Send, 
   Trash2, 
   Clock, 
@@ -36,12 +37,14 @@ import {
   Plus,
   Edit3,
   X,
-  MessageSquare
+  MessageSquare,
+  Sliders
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
 import { toast } from 'sonner';
 import { useAppStore } from '../store/useAppStore';
+import { PromptOptimizer } from './PromptOptimizer';
 
 // Theme helper mapping bot theme color presets
 const getThemeColorConfig = (bgClass?: string) => {
@@ -57,6 +60,18 @@ const getThemeColorConfig = (bgClass?: string) => {
     bgMute: 'bg-indigo-950/10',
     glow: 'bg-indigo-500',
     badge: 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30 font-bold',
+    // Light theme variants for the configuration drawer
+    lightLabel: 'text-indigo-700',
+    lightActiveBadge: 'bg-indigo-50 border-indigo-400 text-indigo-700 shadow-sm',
+    lightCheckboxActive: 'bg-indigo-600 border-indigo-600 text-white',
+    lightAccentText: 'text-indigo-600',
+    lightActiveInput: 'border-indigo-500/20 focus-within:border-indigo-600/60',
+    lightApiCardBg: 'bg-indigo-50/30 border-indigo-500/15 hover:border-indigo-500/30',
+    lightConsoleTitle: 'text-indigo-950',
+    lightConsoleBorder: 'border-indigo-500/15',
+    lightActiveBtn: 'bg-indigo-500/10 border-indigo-500/40 text-indigo-800 shadow-sm',
+    lightConsoleGlow: 'text-indigo-500',
+    lightConsoleBg: 'border-indigo-505/15 shadow-indigo-505/5'
   };
   
   if (!bgClass) return defaults;
@@ -78,6 +93,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: 'bg-emerald-950/10',
       glow: 'bg-emerald-500',
       badge: 'bg-emerald-500/20 text-emerald-200 border-emerald-500/30 font-bold',
+      lightLabel: 'text-emerald-700',
+      lightActiveBadge: 'bg-emerald-50 border-emerald-400 text-emerald-700 shadow-sm',
+      lightCheckboxActive: 'bg-emerald-600 border-emerald-600 text-white',
+      lightAccentText: 'text-emerald-600',
+      lightActiveInput: 'border-emerald-500/20 focus-within:border-emerald-600/60',
+      lightApiCardBg: 'bg-emerald-50/30 border-emerald-500/15 hover:border-emerald-500/30',
+      lightConsoleTitle: 'text-emerald-950',
+      lightConsoleBorder: 'border-emerald-500/15',
+      lightActiveBtn: 'bg-emerald-500/10 border-emerald-500/40 text-emerald-800 shadow-sm',
+      lightConsoleGlow: 'text-emerald-550',
+      lightConsoleBg: 'border-emerald-505/15 shadow-emerald-505/5'
     };
   }
   if (cleanClass.includes('rose') || cleanClass.includes('red')) {
@@ -93,6 +119,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: 'bg-rose-950/10',
       glow: 'bg-rose-500',
       badge: 'bg-rose-500/20 text-rose-200 border-rose-500/30 font-bold',
+      lightLabel: 'text-rose-700',
+      lightActiveBadge: 'bg-rose-50 border-rose-400 text-rose-700 shadow-sm',
+      lightCheckboxActive: 'bg-rose-600 border-rose-600 text-white',
+      lightAccentText: 'text-rose-600',
+      lightActiveInput: 'border-rose-500/20 focus-within:border-rose-600/60',
+      lightApiCardBg: 'bg-rose-50/30 border-rose-500/15 hover:border-rose-500/30',
+      lightConsoleTitle: 'text-rose-950',
+      lightConsoleBorder: 'border-rose-500/15',
+      lightActiveBtn: 'bg-rose-500/10 border-rose-500/40 text-rose-800 shadow-sm',
+      lightConsoleGlow: 'text-rose-500',
+      lightConsoleBg: 'border-rose-505/15 shadow-rose-505/5'
     };
   }
   if (cleanClass.includes('amber') || cleanClass.includes('yellow') || cleanClass.includes('orange')) {
@@ -108,6 +145,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: 'bg-amber-950/10',
       glow: 'bg-amber-500',
       badge: 'bg-amber-500/20 text-amber-200 border-amber-500/30 font-bold',
+      lightLabel: 'text-amber-700',
+      lightActiveBadge: 'bg-amber-50 border-amber-400 text-amber-700 shadow-sm',
+      lightCheckboxActive: 'bg-amber-700 border-amber-700 text-white',
+      lightAccentText: 'text-amber-605',
+      lightActiveInput: 'border-amber-500/20 focus-within:border-amber-600/60',
+      lightApiCardBg: 'bg-amber-50/30 border-amber-500/15 hover:border-amber-500/30',
+      lightConsoleTitle: 'text-amber-950',
+      lightConsoleBorder: 'border-amber-500/15',
+      lightActiveBtn: 'bg-amber-500/10 border-amber-500/40 text-amber-805 shadow-sm',
+      lightConsoleGlow: 'text-amber-500',
+      lightConsoleBg: 'border-amber-505/15 shadow-amber-505/5'
     };
   }
   if (cleanClass.includes('purple') || cleanClass.includes('violet')) {
@@ -123,6 +171,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: 'bg-purple-950/10',
       glow: 'bg-purple-500',
       badge: 'bg-purple-500/20 text-purple-200 border-purple-500/30 font-bold',
+      lightLabel: 'text-purple-700',
+      lightActiveBadge: 'bg-purple-50 border-purple-400 text-purple-700 shadow-sm',
+      lightCheckboxActive: 'bg-purple-600 border-purple-600 text-white',
+      lightAccentText: 'text-purple-600',
+      lightActiveInput: 'border-purple-500/20 focus-within:border-purple-600/60',
+      lightApiCardBg: 'bg-purple-50/30 border-purple-500/15 hover:border-purple-500/30',
+      lightConsoleTitle: 'text-purple-950',
+      lightConsoleBorder: 'border-purple-500/15',
+      lightActiveBtn: 'bg-purple-500/10 border-purple-500/40 text-purple-800 shadow-sm',
+      lightConsoleGlow: 'text-purple-500',
+      lightConsoleBg: 'border-purple-505/15 shadow-purple-505/5'
     };
   }
   if (cleanClass.includes('sky') || cleanClass.includes('blue')) {
@@ -138,6 +197,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: 'bg-sky-950/10',
       glow: 'bg-sky-500',
       badge: 'bg-sky-500/20 text-sky-200 border-sky-500/30 font-bold',
+      lightLabel: 'text-sky-700',
+      lightActiveBadge: 'bg-sky-50 border-sky-400 text-sky-700 shadow-sm',
+      lightCheckboxActive: 'bg-sky-600 border-sky-600 text-white',
+      lightAccentText: 'text-sky-600',
+      lightActiveInput: 'border-sky-500/20 focus-within:border-sky-600/60',
+      lightApiCardBg: 'bg-sky-50/30 border-sky-500/15 hover:border-sky-500/30',
+      lightConsoleTitle: 'text-sky-950',
+      lightConsoleBorder: 'border-sky-500/15',
+      lightActiveBtn: 'bg-sky-500/10 border-sky-500/40 text-sky-800 shadow-sm',
+      lightConsoleGlow: 'text-sky-500',
+      lightConsoleBg: 'border-sky-505/15 shadow-sky-505/5'
     };
   }
   
@@ -156,6 +226,17 @@ const getThemeColorConfig = (bgClass?: string) => {
       bgMute: `bg-${color}-950/10`,
       glow: `bg-${color}-500`,
       badge: `bg-${color}-500/20 text-${color}-200 border-${color}-500/30 font-bold`,
+      lightLabel: `text-${color}-700`,
+      lightActiveBadge: `bg-${color}-50 border-${color}-400 text-${color}-700 shadow-sm`,
+      lightCheckboxActive: `bg-${color}-600 border-${color}-600 text-white`,
+      lightAccentText: `text-${color}-600`,
+      lightActiveInput: `border-${color}-500/20 focus-within:border-${color}-600/60`,
+      lightApiCardBg: `bg-${color}-50/30 border-${color}-500/15 hover:border-${color}-500/30`,
+      lightConsoleTitle: `text-${color}-950`,
+      lightConsoleBorder: `border-${color}-500/15`,
+      lightActiveBtn: `bg-${color}-500/10 border-${color}-500/40 text-${color}-800 shadow-sm`,
+      lightConsoleGlow: `text-${color}-500`,
+      lightConsoleBg: `border-${color}-505/15 shadow-${color}-505/5`
     };
   }
   
@@ -699,7 +780,7 @@ export const CompareChatView: React.FC = () => {
     toast.success("Conversation renamed.");
   };
 
-  const [isInstructionEditing, setIsInstructionEditing] = useState<boolean>(false);
+  const [isConfigureOpen, setIsConfigureOpen] = useState(false);
 
   // Local storage credentials
   const [keys, setKeys] = useState({
@@ -710,14 +791,35 @@ export const CompareChatView: React.FC = () => {
     deepseekKey: localStorage.getItem('compare_key_deepseek') || '',
   });
 
+  const [serverKeysStatus, setServerKeysStatus] = useState<Record<string, boolean>>({
+    geminiKey: false,
+    openaiKey: false,
+    anthropicKey: false,
+    groqKey: false,
+    deepseekKey: false,
+  });
+
+  useEffect(() => {
+    fetch('/api/keys-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setServerKeysStatus({
+            geminiKey: !!data.geminiKey,
+            openaiKey: !!data.openaiKey,
+            anthropicKey: !!data.anthropicKey,
+            groqKey: !!data.groqKey,
+            deepseekKey: !!data.deepseekKey,
+          });
+        }
+      })
+      .catch(err => console.warn("Failed to fetch server credentials status:", err));
+  }, []);
+
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
-  const [isKeysConfigOpen, setIsKeysConfigOpen] = useState(false);
   const [copiedResponseIds, setCopiedResponseIds] = useState<Record<string, boolean>>({});
-  
-  const [isModelChooserCollapsed, setIsModelChooserCollapsed] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [isPromptGeneratorOpen, setIsPromptGeneratorOpen] = useState(false);
+  const [isPromptOptimizerOpen, setIsPromptOptimizerOpen] = useState(false);
   const [selectedGeneratorStyle, setSelectedGeneratorStyle] = useState<'standard' | 'creative' | 'logical' | 'speed'>('standard');
 
   const matchedPurpose = AI_PURPOSES.find(p => {
@@ -749,6 +851,14 @@ export const CompareChatView: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [generating, setGenerating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 200) + 'px';
+    }
+  }, [inputMessage]);
 
   const { bots } = useAppStore();
   const activeBot = bots[0];
@@ -1127,7 +1237,7 @@ export const CompareChatView: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex bg-[#050505] animate-fade-in font-sans overflow-hidden relative">
+    <div className="w-full h-full flex bg-[#f8fafc] animate-fade-in font-sans overflow-hidden relative">
       
       {/* Mobile Sidebar Backdrop overlay */}
       {isSidebarOpen && (
@@ -1139,7 +1249,7 @@ export const CompareChatView: React.FC = () => {
 
       {/* Chat History Sidebar */}
       <div className={cn(
-        "bg-[#111b21] border-r border-[#222e35] h-full flex flex-col transition-all duration-300 shrink-0 z-30",
+        "bg-white border-r border-slate-200 h-full flex flex-col transition-all duration-300 shrink-0 z-30",
         // Desktop responsive:
         isSidebarOpen ? "md:w-[280px]" : "md:w-0 md:overflow-hidden md:border-r-0",
         // Mobile responsive absolute slide-out drawer:
@@ -1147,10 +1257,10 @@ export const CompareChatView: React.FC = () => {
         isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       )}>
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-[#222e35] flex items-center justify-between">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-[#00e676]" />
-            <span className="font-extrabold text-[#fafafa] tracking-widest text-[10.5px] uppercase select-none">
+            <Clock className="w-4 h-4 text-indigo-600" />
+            <span className="font-extrabold text-slate-800 tracking-widest text-[10.5px] uppercase select-none">
               Chat History
             </span>
           </div>
@@ -1158,18 +1268,18 @@ export const CompareChatView: React.FC = () => {
           <button 
             type="button"
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-1 text-zinc-450 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="md:hidden p-1 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* New Chat Button */}
-        <div className="p-3 border-b border-[#222e35]/30">
+        <div className="p-3 border-b border-slate-200/60">
           <button
             type="button"
             onClick={handleAddNewSession}
-            className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-600/15 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-[0.98] select-none cursor-pointer"
+            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-600/15 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-[0.98] select-none cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white font-bold" />
             <span>+ NEW CHAT</span>
@@ -1196,8 +1306,8 @@ export const CompareChatView: React.FC = () => {
                 className={cn(
                   "w-full text-left p-3 rounded-xl flex items-center justify-between group transition-all cursor-pointer relative",
                   isActive 
-                    ? activeBot ? `bg-[#202c33] border-l-2 border-${colorName}-500 text-white font-semibold` : "bg-[#202c33] border-l-2 border-[#00a884] text-white font-semibold" 
-                    : "hover:bg-[#202c33]/40 text-zinc-400 hover:text-zinc-200"
+                    ? activeBot ? `bg-slate-100 border-l-2 border-${colorName}-500 text-slate-800 font-bold` : "bg-indigo-50 border-l-2 border-indigo-600 text-indigo-650 font-bold" 
+                    : "hover:bg-slate-50 text-slate-500 hover:text-indigo-600 font-medium"
                 )}
               >
                 {isEditing ? (
@@ -1210,13 +1320,13 @@ export const CompareChatView: React.FC = () => {
                         if (e.key === 'Enter') handleSaveSessionTitle(session.id);
                         if (e.key === 'Escape') setEditingSessionId(null);
                       }}
-                      className="flex-1 bg-zinc-900 border border-zinc-700/80 rounded px-2 py-0.5 text-xs text-white max-w-[170px] outline-none"
+                      className="flex-1 bg-white border border-slate-200 rounded px-2 py-0.5 text-xs text-slate-800 max-w-[170px] outline-none"
                       autoFocus
                     />
                     <button
                       type="button"
                       onClick={() => handleSaveSessionTitle(session.id)}
-                      className="p-1 text-emerald-400 hover:text-emerald-300 rounded hover:bg-[#111b21] cursor-pointer"
+                      className="p-1 text-emerald-600 hover:text-emerald-750 rounded hover:bg-slate-50 cursor-pointer"
                       title="Save"
                     >
                       <Check className="w-3 h-3" />
@@ -1224,7 +1334,7 @@ export const CompareChatView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditingSessionId(null)}
-                      className="p-1 text-zinc-400 hover:text-zinc-350 rounded hover:bg-[#111b21] cursor-pointer"
+                      className="p-1 text-zinc-400 hover:text-zinc-350 rounded hover:bg-[#ffffff] cursor-pointer"
                       title="Cancel"
                     >
                       <X className="w-3 h-3" />
@@ -1263,7 +1373,7 @@ export const CompareChatView: React.FC = () => {
                       <button
                         type="button"
                         onClick={(e) => startEditingSession(session, e)}
-                        className="p-1 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 cursor-pointer"
+                        className="p-1 text-slate-400 hover:text-slate-705 rounded hover:bg-slate-100 cursor-pointer"
                         title="Rename Chat"
                       >
                         <Edit3 className="w-3 h-3" />
@@ -1271,7 +1381,7 @@ export const CompareChatView: React.FC = () => {
                       <button
                         type="button"
                         onClick={(e) => handleDeleteSession(session.id, e)}
-                        className="p-1 text-zinc-500 hover:text-red-400 rounded hover:bg-zinc-800 cursor-pointer"
+                        className="p-1 text-slate-500 hover:text-red-600 rounded hover:bg-slate-100 cursor-pointer"
                         title="Delete Session"
                       >
                         <Trash2 className="w-3 h-3" />
@@ -1293,8 +1403,10 @@ export const CompareChatView: React.FC = () => {
           
           {/* Custom Messenger Room Title Sub-Header Bar */}
           <div className={cn(
-            "p-3.5 border-b flex items-center justify-between text-white shrink-0 shadow-sm relative overflow-hidden transition-all duration-300",
-            activeBot ? `bg-[#121c22]/95 border-${colorName}-500/10` : "bg-[#202c33] border-[#222e35]"
+            "p-3.5 border-b flex items-center justify-between shrink-0 shadow-sm relative overflow-hidden transition-all duration-300 z-10",
+            activeBot 
+              ? `bg-white/40 border-${colorName}-500/15 backdrop-blur-xl` 
+              : "bg-[#f8fafc]/35 border-slate-200/40 backdrop-blur-xl"
           )}>
             {activeBot && (
               <div className={cn("absolute inset-0 opacity-[0.06] pointer-events-none", theme.glow)} />
@@ -1303,35 +1415,35 @@ export const CompareChatView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-850/60 transition-colors cursor-pointer shrink-0"
+                className="p-1.5 text-slate-550 hover:text-slate-800 rounded-lg hover:bg-slate-200/50 transition-colors cursor-pointer shrink-0"
                 title="Toggle Sidebar History"
               >
-                <Menu className={cn("w-5 h-5", activeBot ? theme.text : "text-emerald-400")} />
+                <Menu className={cn("w-5 h-5", activeBot ? theme.lightAccentText : "text-indigo-600")} />
               </button>
               <div className={cn(
                 "w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[#fafafa] relative shadow-md shrink-0 transition-all",
-                activeBot ? theme.bg : "bg-[#00a884]"
+                activeBot ? theme.bg : "bg-indigo-650"
               )}>
                 <GitCompare className="w-5 h-5 text-white" />
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 rounded-full border-inherit" title="Live Arena Connected" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-sm font-bold tracking-tight text-white flex items-center gap-1.5 truncate max-w-[150px] sm:max-w-xs">
+                <h4 className="text-sm font-black tracking-tight text-slate-850 flex items-center gap-1.5 truncate max-w-[150px] sm:max-w-xs">
                   <span>{activeSession.title || 'General Q&A'}</span>
                 </h4>
-                <p className="text-[11px] flex items-center gap-1 opacity-90 font-medium select-none">
-                  <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shrink-0", activeBot ? theme.glow : "bg-[#00e676]")} />
-                  <span className={activeBot ? theme.text : "text-[#00e676]"}>{selectedModelIds.length} models responding live</span>
+                <p className="text-[11px] flex items-center gap-1 font-semibold select-none">
+                  <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shrink-0", activeBot ? theme.glow : "bg-indigo-500")} />
+                  <span className={activeBot ? theme.lightLabel : "text-indigo-650"}>{selectedModelIds.length} models responding live</span>
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-zinc-300">
+            <div className="flex items-center gap-3 text-slate-700">
               {chatHistory.length > 0 && (
                 <div className="flex items-center gap-2 shrink-0">
                   {isConfirmingClear ? (
-                    <div className="flex items-center gap-2 bg-red-950/40 px-2.5 py-1.5 rounded-xl border border-red-900/40 animate-fade-in">
-                      <span className="text-[10px] text-red-300 font-semibold select-none mr-1">Reset?</span>
+                    <div className="flex items-center gap-2 bg-red-50 px-2.5 py-1.5 rounded-xl border border-red-200 animate-fade-in">
+                      <span className="text-[10px] text-red-700 font-bold select-none mr-1">Reset?</span>
                       <button
                         id="btn-confirm-reset-chat-yes"
                         onClick={performClearChat}
@@ -1342,7 +1454,7 @@ export const CompareChatView: React.FC = () => {
                       <button
                         id="btn-confirm-reset-chat-cancel"
                         onClick={() => setIsConfirmingClear(false)}
-                        className="px-2 py-0.5 bg-zinc-800 hover:bg-[#2a2a2a] text-zinc-300 font-medium text-[10px] rounded cursor-pointer transition-colors outline-none"
+                        className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-[10px] rounded cursor-pointer transition-colors outline-none"
                       >
                         No
                       </button>
@@ -1351,10 +1463,10 @@ export const CompareChatView: React.FC = () => {
                     <button
                       id="btn-trigger-reset-chat"
                       onClick={handleClearChat}
-                      className="px-3 py-1.5 bg-red-950/25 border border-red-550 text-red-400 hover:bg-red-950/45 hover:text-red-300 rounded-xl flex items-center justify-center gap-1.5 text-[10.5px] font-bold transition-all cursor-pointer active:scale-[0.98] shadow-md shadow-red-950/30 select-none outline-none ring-1 ring-red-500/30"
+                      className="px-3 py-1.5 bg-red-50 hover:bg-red-100/80 border border-red-200/60 text-red-600 hover:text-red-700 rounded-xl flex items-center justify-center gap-1.5 text-[10.5px] font-bold transition-all cursor-pointer active:scale-[0.98] shadow-sm select-none outline-none"
                       title="Reset Comparative Playground"
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                      <Trash2 className="w-3.5 h-3.5 text-red-550" />
                       <span>Reset Chat</span>
                     </button>
                   )}
@@ -1363,230 +1475,399 @@ export const CompareChatView: React.FC = () => {
 
               <button 
                 onClick={() => {
-                  setIsInstructionEditing(!isInstructionEditing);
-                  setIsKeysConfigOpen(false);
+                  setIsConfigureOpen(!isConfigureOpen);
                 }}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-[10.5px] font-bold border transition-all cursor-pointer active:scale-95 select-none relative z-10",
-                  isInstructionEditing 
-                    ? activeBot ? `${theme.badge} border-${colorName}-500/25` : "bg-[#00a884]/15 border-[#00a884]/40 text-[#00e676]" 
-                    : "bg-zinc-850/40 border-zinc-700/60 hover:border-zinc-600 text-zinc-300 hover:text-white"
+                  "px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-[10.5px] font-bold border transition-all duration-300 cursor-pointer active:scale-95 select-none relative z-10 shadow-sm",
+                  isConfigureOpen 
+                    ? activeBot 
+                      ? `bg-${colorName}-50 border-${colorName}-200 text-${colorName}-700` 
+                      : "bg-indigo-50 border-indigo-200 text-indigo-700" 
+                    : activeBot
+                      ? `bg-white/60 border-slate-200 hover:bg-slate-50 text-slate-750`
+                      : "bg-white/60 border-slate-200 hover:bg-slate-50 text-slate-750"
                 )}
-                title="Customize default workspace system instruction for LLM Arena"
+                title="Configure LLM Arena Settings (Session Purpose, Active Channels, System Instructions & Credentials)"
               >
-                <Brain className="w-3.5 h-3.5 text-[#00e676]" />
-                <span>Configure Persona Prompt</span>
-                {isInstructionEditing ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              </button>
-
-              <button 
-                onClick={() => {
-                  setIsKeysConfigOpen(!isKeysConfigOpen);
-                  setIsInstructionEditing(false);
-                }}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-[10.5px] font-bold border transition-all cursor-pointer active:scale-95 select-none relative z-10",
-                  isKeysConfigOpen 
-                    ? activeBot ? `${theme.badge} border-${colorName}-500/25` : "bg-amber-500/15 border-amber-500/40 text-amber-300" 
-                    : "bg-zinc-850/40 border-zinc-700/60 hover:border-zinc-600 text-zinc-300 hover:text-white"
-                )}
-                title="Configure custom Provider credentials side-by-side"
-              >
-                <KeyRound className="w-3.5 h-3.5 text-amber-500" />
-                <span>Configure API Keys</span>
-                {isKeysConfigOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                <Settings className={cn("w-3.5 h-3.5 transition-colors animate-spin-slow", isConfigureOpen ? (activeBot ? `text-${colorName}-600` : "text-indigo-600") : "text-slate-500")} />
+                <span className="text-slate-750">Configure Arena</span>
+                {isConfigureOpen 
+                  ? <ChevronUp className="w-3 h-3 text-slate-500" /> 
+                  : <ChevronDown className="w-3 h-3 text-slate-400" />
+                }
               </button>
             </div>
           </div>
 
-          {/* Expandable Workspace System instruction drawer */}
+          {/* Expandable Unified Configure Drawer */}
           <AnimatePresence>
-            {isInstructionEditing && (
+            {isConfigureOpen && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-[#111b21] border-b border-[#222e35] p-4 space-y-2.5 overflow-hidden shrink-0 shadow-lg z-10"
+                className={cn(
+                  "border-b p-5 space-y-4 overflow-hidden shrink-0 shadow-md z-20 text-zinc-900 bg-white relative transition-all duration-500",
+                  theme.lightConsoleBg
+                )}
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className={cn("w-4 h-4", activeBot ? theme.text : "text-[#00e676]")} />
-                    <h5 className="text-[11px] font-extrabold text-zinc-200 uppercase tracking-widest">Arena-Wide System Prompt Instructions</h5>
-                  </div>
-                  <span className={cn(
-                    "text-[9px] font-semibold px-2 py-0.5 rounded-full select-none border",
-                    activeBot 
-                      ? `${theme.badge} border-${colorName}-500/20` 
-                      : "text-[#00a884] bg-[#00a884]/10 border border-[#00a884]/20"
-                  )}>
-                    APP-WIDE PRESET
-                  </span>
-                </div>
-                <textarea
-                  value={systemInstruction}
-                  onChange={(e) => setSystemInstruction(e.target.value)}
-                  placeholder="E.g., You are a strict Python expert. Review logic and answer only in complete code..."
-                  rows={2}
-                  className={cn(
-                    "w-full bg-[#202c33] border rounded-xl px-3.5 py-2 text-xs text-zinc-200 outline-none transition-all placeholder-zinc-700 text-left font-sans resize-y",
-                    activeBot ? `border-zinc-800/80 focus:border-${colorName}-500` : "border-zinc-800/80 focus:border-[#00a884]"
-                  )}
-                />
-                <p className="text-[10px] text-zinc-500 italic">This instruction is injected live across all selected LLMs during comparative evaluations. Does not change your saved bot assistant configuration files.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {/* Dynamic premium glowing top line */}
+                <div className={cn(
+                  "absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-current to-transparent opacity-60 blur-[0.5px] transition-all duration-500",
+                  theme.lightConsoleGlow
+                )} />
 
-          {/* Expandable API Keys Configuration drawer */}
-          <AnimatePresence>
-            {isKeysConfigOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="bg-[#111b21] border-b border-[#222e35] p-5 space-y-4 overflow-hidden shrink-0 shadow-lg z-10 text-white relative px-5 py-5"
-              >
-                {/* Visual grid overlay */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.008)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.008)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40" />
+                {/* Subtle tech grid patterns */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.015)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-40" />
                 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 relative z-10">
-                  <div className="space-y-0.5">
-                    <h5 className="text-[11px] font-extrabold text-[#fafafa] uppercase tracking-widest flex items-center gap-1.5 font-sans">
-                      <KeyRound className="w-4 h-4 text-amber-500" />
-                      <span>Custom API Keys Settings</span>
-                    </h5>
-                    <p className="text-[10.5px] text-zinc-400">Keys are saved locally in your browser sandbox. Leave a field blank to route via the secure backend defaults.</p>
+                <div className={cn(
+                  "flex items-center justify-between border-b pb-3 relative z-10 transition-colors duration-300",
+                  theme.lightConsoleBorder
+                )}>
+                  <div className="flex items-center gap-2">
+                    <Settings className={cn("w-4 h-4 transition-colors", theme.lightAccentText)} />
+                    <h5 className={cn(
+                      "text-xs font-black uppercase tracking-widest transition-colors duration-300",
+                      theme.lightConsoleTitle
+                    )}>Arena Configuration Console</h5>
                   </div>
-                  
-                  <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0">
-                    <span className="text-[9px] bg-emerald-500/10 text-[#00e676] border border-emerald-500/20 font-bold px-2 py-0.5 rounded-full select-none">
-                      🔒 SECURE END-TO-END
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        localStorage.removeItem('compare_key_gemini');
-                        localStorage.removeItem('compare_key_openai');
-                        localStorage.removeItem('compare_key_anthropic');
-                        localStorage.removeItem('compare_key_groq');
-                        localStorage.removeItem('compare_key_deepseek');
-                        setKeys({
-                          geminiKey: '',
-                          openaiKey: '',
-                          anthropicKey: '',
-                          groqKey: '',
-                          deepseekKey: ''
-                        });
-                        toast.success("All locally cached provider keys cleared!");
-                      }}
-                      className="text-[9px] text-red-400 hover:text-red-300 bg-red-950/20 border border-red-900/40 hover:bg-red-950/40 px-2.5 py-1 rounded duration-150 transition-all cursor-pointer font-bold outline-none"
-                    >
-                      Clear All Keys
-                    </button>
-                  </div>
+                  <span className="text-[10px] text-zinc-500 italic hidden sm:inline">Customize interactive session parameters, channels, & rules</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5 relative z-10">
-                  {[
-                    { key: 'geminiKey' as const, label: 'Gemini AI', desc: 'Google Cloud Platform', color: 'border-cyan-500/20 focus-within:border-cyan-500/70 focus-within:ring-1 focus-within:ring-cyan-500/30' },
-                    { key: 'openaiKey' as const, label: 'OpenAI', desc: 'GPT models', color: 'border-[#00a884]/20 focus-within:border-[#00a884]/70 focus-within:ring-1 focus-within:ring-[#00a884]/30' },
-                    { key: 'anthropicKey' as const, label: 'Anthropic', desc: 'Claude models', color: 'border-orange-500/20 focus-within:border-orange-500/70 focus-within:ring-1 focus-within:ring-orange-500/30' },
-                    { key: 'groqKey' as const, label: 'Groq Cloud', desc: 'Llama models', color: 'border-pink-500/20 focus-within:border-pink-500/70 focus-within:ring-1 focus-within:ring-pink-500/30' },
-                    { key: 'deepseekKey' as const, label: 'DeepSeek', desc: 'Analytical DeepSeek V3', color: 'border-indigo-500/20 focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30' },
-                  ].map((field) => {
-                    const hasKey = !!keys[field.key];
-                    const isVisible = !!showKeys[field.key];
-                    
-                    return (
-                      <div key={field.key} className="bg-[#1e2a30]/65 border border-[#2c3d46]/75 hover:border-zinc-700/60 p-3 rounded-2xl space-y-2 transition-all">
-                        <div className="flex items-center justify-between min-w-0">
-                          <div>
-                            <span className="text-[10.5px] font-extrabold text-zinc-150 block">{field.label}</span>
-                            <span className="text-[9px] text-zinc-500 block leading-tight">{field.desc}</span>
-                          </div>
-                          
-                          <span className={cn(
-                            "text-[8.5px] font-extrabold px-1.5 py-0.5 rounded uppercase font-mono tracking-tight",
-                            hasKey 
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15" 
-                              : "bg-[#202c33]/80 text-zinc-550 border border-transparent"
-                          )}>
-                            {hasKey ? "CUSTOM" : "SYSTEM DEFAULT"}
-                          </span>
-                        </div>
-                        
-                        <div className={cn("flex items-center gap-1.5 bg-[#202c33] border rounded-xl px-2.5 py-1.5 shadow-inner grow transition-all duration-300", field.color)}>
-                          <input
-                            type={isVisible ? "text" : "password"}
-                            value={keys[field.key]}
-                            onChange={(e) => handleKeyChange(field.key, e.target.value)}
-                            placeholder={hasKey ? "•••••••••••••••••" : "Using system config..."}
-                            className="flex-1 bg-transparent border-none text-[10px] text-zinc-150 outline-none placeholder-zinc-650 font-mono"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowKeys(prev => ({ ...prev, [field.key]: !prev[field.key] }))}
-                            className="text-zinc-500 hover:text-zinc-300 shortcut outline-none p-0.5 cursor-pointer shrink-0"
-                            title={isVisible ? "Hide API Key" : "Show API Key"}
-                          >
-                            {isVisible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                          </button>
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                  {/* Left Column: Purpose & Models Selector */}
+                  <div className="space-y-4">
+                    {/* Purpose Section */}
+                    <div className="space-y-1.5">
+                      <label className={cn(
+                        "text-[10px] font-black uppercase tracking-wider block transition-colors duration-300",
+                        theme.lightLabel
+                      )}>Session Purpose Mode</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {AI_PURPOSES.map((p) => {
+                          const isSelected = (selectedPurposeId || 'default') === p.id;
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => handlePurposeSelect(p.id || 'default')}
+                              className={cn(
+                                "flex items-center gap-2 p-2.5 rounded-xl border text-[10.5px] font-semibold uppercase text-left transition-all duration-300 cursor-pointer select-none",
+                                isSelected
+                                  ? theme.lightActiveBadge
+                                  : "bg-zinc-50 border-zinc-200 hover:border-zinc-400 hover:bg-zinc-100 text-zinc-700"
+                              )}
+                            >
+                              <span className="text-sm select-none">{p.emoji}</span>
+                              <span className="truncate">{p.name}</span>
+                            </button>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
+                    </div>
+
+                    {/* AI Channels Settings */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className={cn(
+                          "text-[10px] font-black uppercase tracking-wider block transition-colors duration-300",
+                          theme.lightLabel
+                        )}>Active AI Channels</label>
+                        <span className={cn(
+                          "text-[10px] font-bold font-mono transition-colors duration-300",
+                          theme.lightAccentText
+                        )}>
+                          {selectedModelIds.length} / {AVAILABLE_MODELS.length} Active
+                        </span>
+                      </div>
+                      <div className={cn(
+                        "border rounded-xl p-2 max-h-[170px] overflow-y-auto space-y-1 transition-colors duration-300",
+                        theme.lightApiCardBg
+                      )}>
+                        {AVAILABLE_MODELS.map((m) => {
+                          const active = selectedModelIds.includes(m.id);
+                          return (
+                            <button
+                              key={m.id}
+                              type="button"
+                              onClick={() => handleModelToggle(m.id)}
+                              className={cn(
+                                "w-full text-left py-1.5 px-2.5 flex items-center justify-between rounded-lg transition-all duration-200 outline-none cursor-pointer",
+                                active 
+                                  ? activeBot
+                                    ? `bg-${colorName}-50 hover:bg-${colorName}-100/60 text-${colorName}-950`
+                                    : "bg-emerald-50 hover:bg-emerald-100/60 text-emerald-950"
+                                  : "hover:bg-zinc-100 text-zinc-800"
+                              )}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className={cn(
+                                  "w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all duration-300",
+                                  active 
+                                    ? theme.lightCheckboxActive
+                                    : "border-zinc-300 bg-white"
+                                )}>
+                                  {active && <Check className="w-2.5 h-2.5 stroke-[4px]" />}
+                                </div>
+                                <div className="truncate">
+                                  <span className={cn(
+                                    "text-[10.5px] font-bold block truncate transition-colors duration-200",
+                                    active 
+                                      ? activeBot ? `text-${colorName}-950` : "text-emerald-950" 
+                                      : "text-zinc-800"
+                                  )}>{m.name}</span>
+                                  <span className={cn(
+                                    "text-[8.5px] font-mono tracking-wider block transition-colors duration-200",
+                                    active 
+                                      ? activeBot ? `text-${colorName}-700` : "text-emerald-700" 
+                                      : "text-zinc-500"
+                                  )}>{m.provider}</span>
+                                </div>
+                              </div>
+                              {m.requiresKey && !keys[m.keyName] && !serverKeysStatus[m.keyName] ? (
+                                <span className="text-[7px] bg-red-50 text-red-600 px-1 py-0.5 rounded border border-red-200 font-bold font-sans tracking-wide shrink-0">
+                                  ⚠ KEY NEEDED
+                                </span>
+                              ) : m.requiresKey && serverKeysStatus[m.keyName] && !keys[m.keyName] ? (
+                                <span className="text-[7.5px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-250 font-black font-sans tracking-tight shrink-0 flex items-center gap-0.5">
+                                  ⚡ SERVER ACTIVE
+                                </span>
+                              ) : null}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Persona system instruction and Provider Keys */}
+                  <div className="space-y-4">
+                    {/* Persona System Instruction */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className={cn(
+                          "text-[10px] font-black uppercase tracking-wider flex items-center gap-1 select-none transition-colors duration-300",
+                          theme.lightLabel
+                        )}>
+                          <Brain className={cn("w-3.5 h-3.5 transition-colors duration-300", theme.lightAccentText)} />
+                          <span>Arena-Wide Instructions (System Prompt)</span>
+                        </label>
+                        <span className={cn(
+                          "text-[9px] font-semibold px-2 py-0.5 rounded-full border select-none transition-colors duration-300",
+                          theme.lightActiveBadge
+                        )}>
+                          APP PRESET LIVE
+                        </span>
+                      </div>
+                      <textarea
+                        value={systemInstruction}
+                        onChange={(e) => setSystemInstruction(e.target.value)}
+                        placeholder="E.g., You are a python genius. Answer logically with complete code blocks only..."
+                        rows={3}
+                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs text-zinc-800 outline-none transition-all placeholder-zinc-400 font-sans resize-y duration-300 focus:border-zinc-400 focus:bg-white"
+                      />
+                    </div>
+
+                    {/* API Keys Configuration */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className={cn(
+                          "text-[10px] font-black uppercase tracking-wider flex items-center gap-1 select-none transition-colors duration-300",
+                          theme.lightLabel
+                        )}>
+                          <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+                          <span>Provider Custom API Credentials</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            localStorage.removeItem('compare_key_gemini');
+                            localStorage.removeItem('compare_key_openai');
+                            localStorage.removeItem('compare_key_anthropic');
+                            localStorage.removeItem('compare_key_groq');
+                            localStorage.removeItem('compare_key_deepseek');
+                            setKeys({
+                              geminiKey: '',
+                              openaiKey: '',
+                              anthropicKey: '',
+                              groqKey: '',
+                              deepseekKey: ''
+                            });
+                            toast.success("Saved credentials cache cleared!");
+                          }}
+                          className="text-[9px] hover:text-white px-2 py-0.5 rounded transition-all duration-150 font-bold outline-none cursor-pointer border text-red-600 bg-red-50 border-red-200 hover:bg-red-600 hover:text-white hover:border-red-600"
+                        >
+                          Clear All Keys
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-5 gap-2">
+                        {[
+                          { key: 'geminiKey' as const, label: 'Gemini', color: 'border-zinc-200 focus-within:border-zinc-400' },
+                          { key: 'openaiKey' as const, label: 'OpenAI', color: 'border-zinc-200 focus-within:border-zinc-400' },
+                          { key: 'anthropicKey' as const, label: 'Anthropic', color: 'border-zinc-200 focus-within:border-zinc-400' },
+                          { key: 'groqKey' as const, label: 'Groq', color: 'border-zinc-200 focus-within:border-zinc-400' },
+                          { key: 'deepseekKey' as const, label: 'DeepSeek', color: 'border-zinc-200 focus-within:border-zinc-400' },
+                        ].map((field) => {
+                          const hasKey = !!keys[field.key];
+                          const isVisible = !!showKeys[field.key];
+                          
+                          return (
+                            <div key={field.key} className={cn(
+                              "border p-2 rounded-xl flex flex-col justify-between space-y-1.5 transition-all duration-300",
+                              theme.lightApiCardBg
+                            )}>
+                              <div className="flex items-center justify-between min-w-0">
+                                <span className="text-[9.5px] font-bold text-zinc-650 truncate select-none">{field.label}</span>
+                                {serverKeysStatus[field.key] && !hasKey && (
+                                  <span className="text-[7.5px] text-emerald-600 font-extrabold select-none uppercase tracking-tighter shrink-0 flex items-center gap-0.5 animate-pulse">
+                                    ● Server
+                                  </span>
+                                )}
+                              </div>
+                              <div className={cn("flex items-center bg-white border rounded-lg px-2 py-1 grow-0 transition-all", field.color)}>
+                                <input
+                                  type={isVisible ? "text" : "password"}
+                                  value={keys[field.key]}
+                                  onChange={(e) => handleKeyChange(field.key, e.target.value)}
+                                  placeholder={hasKey ? "Key Active" : serverKeysStatus[field.key] ? "Server Active" : "No Key"}
+                                  className="w-full bg-transparent border-none text-[8.5px] text-zinc-800 outline-none placeholder-zinc-400 font-mono min-w-0"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowKeys(prev => ({ ...prev, [field.key]: !prev[field.key] }))}
+                                  className="text-zinc-400 hover:text-zinc-600 outline-none p-0.5 cursor-pointer shrink-0"
+                                  title={isVisible ? "Hide Key" : "Show Key"}
+                                >
+                                  {isVisible ? <EyeOff className="w-2.5 h-2.5" /> : <Eye className="w-2.5 h-2.5" />}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Interactive Chat Logs Area with WhatsApp Wallpaper pattern */}
-          <div 
-            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800 relative bg-[#0b141a]"
-            style={{
-              backgroundImage: `radial-gradient(circle at 10% 20%, ${getBackdropRgba(activeBot?.themeColor)} 0%, transparent 60%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.02) 0%, transparent 60%)`,
-              backgroundColor: '#0b141a'
-            }}
-          >
+          {/* Custom Ambient Liquid Glass Background Canvas */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0" style={{ backgroundColor: '#f8fafc' }}>
+            {/* Liquid glass floating organic blobs */}
+            <motion.div
+              animate={{
+                x: [0, 80, -40, 0],
+                y: [0, -100, 60, 0],
+                scale: [1, 1.35, 0.85, 1],
+                rotate: [0, 120, 240, 360],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute top-10 left-10 w-[450px] h-[450px] rounded-full blur-[110px]"
+              style={{
+                background: `radial-gradient(circle, ${getBackdropRgba(activeBot?.themeColor).replace('0.05', '0.34')} 0%, rgba(99, 102, 241, 0.06) 70%, transparent 100%)`
+              }}
+            />
+            <motion.div
+              animate={{
+                x: [0, -90, 50, 0],
+                y: [0, 80, -100, 0],
+                scale: [1, 0.8, 1.2, 1],
+                rotate: [360, 240, 120, 0],
+              }}
+              transition={{
+                duration: 28,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute bottom-20 right-10 w-[550px] h-[550px] rounded-full blur-[120px]"
+              style={{
+                background: 'radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, rgba(99, 102, 241, 0.08) 75%, transparent 100%)'
+              }}
+            />
+            <motion.div
+              animate={{
+                x: [0, 50, -50, 0],
+                y: [0, 60, 80, 0],
+                scale: [0.9, 1.15, 0.8, 0.9],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full blur-[90px]"
+              style={{
+                background: 'radial-gradient(circle, rgba(236, 72, 153, 0.16) 0%, rgba(245, 158, 11, 0.12) 65%, transparent 100%)'
+              }}
+            />
+            
+            {/* Satin Sheen Reflection Layer */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/35 via-transparent to-white/45 opacity-90 mix-blend-overlay" />
+            
+            {/* Ultra-subtle wet gloss dynamic light line */}
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_42%,#ffffff_50%,transparent_58%)] opacity-[0.035] bg-[size:250%_250%] animate-[pulse_10s_infinite]" />
+          </div>
+
+          {/* Interactive Chat Logs Area */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-300 relative z-10 bg-transparent">
             {chatHistory.length === 0 ? (
               <div className="h-full flex flex-col justify-center py-6">
                 
-                {/* Landing welcome panel */}
-                <div className="text-center p-4 max-w-2xl mx-auto space-y-4">
-                  <div className={cn(
-                    "inline-flex w-12 h-12 rounded-2xl items-center justify-center shadow-md border",
-                    activeBot ? `${theme.badge} border-${colorName}-500/20` : "bg-emerald-500/10 border-emerald-500/20"
-                  )}>
-                    <Sparkles className={cn("w-6 h-6", activeBot ? theme.text : "text-[#00a884]")} />
+                {/* Landing welcome panel - Upgraded to modern responsive Glassmorphism */}
+                <div className="relative overflow-hidden glass-effect rounded-3xl p-8 sm:p-12 text-center border border-indigo-100/50 max-w-2xl mx-auto flex flex-col items-center justify-center shadow-lg">
+                  {/* Ambient background accent glow blobs */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                    <div className={cn(
+                      "absolute -top-12 -left-12 w-44 h-44 rounded-full blur-[55px] opacity-20 transition-all",
+                      activeBot ? theme.glow : "bg-indigo-500/20"
+                    )} />
+                    <div className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full bg-indigo-500/10 blur-[60px] opacity-20" />
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-[#fafafa] tracking-tight">AI Group Chat comparative Arena</h3>
-                    <p className="text-zinc-400 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
-                      Observe performance differences between model sets live. Select your active models above and send a message.
-                    </p>
+
+                  <div className="relative z-10 space-y-5">
+                    <div className={cn(
+                      "inline-flex w-14 h-14 rounded-2xl items-center justify-center shadow-md border transition-all duration-300 transform hover:scale-105",
+                      activeBot ? `${theme.badge} border-${colorName}-500/20` : "bg-indigo-50 border-indigo-100 text-indigo-600"
+                    )}>
+                      <Sparkles className={cn("w-7 h-7", activeBot ? theme.lightAccentText : "text-indigo-600")} />
+                    </div>
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-bold tracking-tight text-slate-800">
+                        {activeBot ? `Chat with ${activeBot.name}` : "Multimodal AI Comparison"}
+                      </h2>
+                      <p className="text-sm font-medium text-slate-500 max-w-md mx-auto">
+                        Ask a question and see how different leading language models process and respond to your query. Compare their responses side-by-side to find the best fit.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 {/* Grid of suggest questions */}
-                <div className="max-w-3xl mx-auto mt-8 px-4 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="max-w-3xl mx-auto mt-8 px-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {STARTER_PROMPTS.map((spr, si) => {
                     const StarterIcon = spr.icon;
                     return (
                       <button
                         key={si}
                         onClick={() => handleSendMessage(undefined, spr.body)}
-                        className="p-4 rounded-2xl text-left border transition-all duration-300 group cursor-pointer relative shadow-sm border-zinc-800 bg-[#111b21]/65 hover:bg-[#202c33]/70 hover:border-emerald-500/20"
+                        className="p-5.5 rounded-2xl text-left border transition-all duration-300 group cursor-pointer relative shadow-sm border-slate-150 bg-white/70 hover:bg-white hover:border-indigo-400 hover:scale-[1.01] hover:shadow-md hover:shadow-indigo-500/5"
                       >
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-between mb-3">
                           <span className={cn("text-[9px] font-extrabold tracking-widest uppercase px-2 py-0.5 rounded-lg", spr.color)}>
                             {spr.badge}
                           </span>
-                          <span className="w-6 h-6 rounded-lg bg-zinc-900/80 flex items-center justify-center border transition-all text-zinc-500 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 group-hover:text-emerald-400">
+                          <span className="w-6.5 h-6.5 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-150 transition-all text-slate-400 group-hover:bg-indigo-50 group-hover:border-indigo-200 group-hover:text-indigo-600">
                             <StarterIcon className="w-3.5 h-3.5" />
                           </span>
                         </div>
-                        <h4 className="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">{spr.title}</h4>
-                        <p className="text-[11px] text-zinc-400 group-hover:text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
+                        <h4 className="text-xs font-black text-slate-800 group-hover:text-indigo-600 transition-colors">{spr.title}</h4>
+                        <p className="text-[11px] text-slate-550 group-hover:text-slate-700 mt-1 line-clamp-2 leading-relaxed font-semibold">
                           {spr.body}
                         </p>
                       </button>
@@ -1598,45 +1879,36 @@ export const CompareChatView: React.FC = () => {
               chatHistory.map((turn, i) => (
                 <div key={turn.id || i} className="space-y-5">
                   
-                  {/* User Speech Segment (Styled like right-aligned WhatsApp chat bubble) */}
+                  {/* User Speech Segment */}
                   {turn.sender === 'user' ? (
-                    <div className="flex items-start justify-end gap-1.5 max-w-[85%] sm:max-w-[70%] ml-auto animate-fade-in relative">
+                    <div className="flex items-start justify-end gap-1.5 max-w-[85%] sm:max-w-[70%] ml-auto animate-fade-in relative group">
                       <div className={cn(
-                        "rounded-2xl rounded-tr-none px-4 py-2.5 text-xs sm:text-sm shadow-md leading-relaxed select-text font-sans relative pr-14 pb-4.5 break-words w-auto min-w-[120px] max-w-full text-white border-l-4 transition-all duration-300",
-                        activeBot ? `${bubbleStyle.bubbleBg} ${bubbleStyle.bubbleBorder}` : "bg-[#005c4b]/95 border-[#00a884]/30"
+                        "rounded-[20px] rounded-br-[6px] px-5 py-3 text-[13px] sm:text-sm shadow-sm leading-relaxed select-text font-medium relative break-words w-auto min-w-[120px] max-w-full transition-all duration-300",
+                        activeBot ? `${bubbleStyle.bubbleBg} text-white` : "bg-indigo-600 text-white"
                       )}>
-                        {/* Rotated bubble corner tail */}
-                        <div className={cn(
-                          "absolute top-0 -right-1 w-3.5 h-3.5 rotate-45 transform origin-top-right rounded-br-sm -z-0 transition-colors duration-300",
-                          activeBot ? bubbleStyle.bubbleTail : "bg-[#005c4b]"
-                        )} />
                         
                         {/* Attachments rendering */}
                         {turn.attachments && turn.attachments.length > 0 && (
                           <div className="mb-2.5 flex flex-col gap-2 shrink-0 select-none max-w-sm pointer-events-auto">
                             {turn.attachments.map((attach) => (
                               <div key={attach.id} className={cn(
-                                "flex items-center gap-2.5 p-2 rounded-xl text-xs text-zinc-100 shadow-sm border transition-all duration-300",
-                                activeBot ? `${bubbleStyle.attachBg} ${bubbleStyle.attachBorder}` : "bg-[#00483a] border-[#00705a]/45"
+                                "flex items-center gap-2.5 p-2 rounded-xl text-xs text-zinc-100 border border-white/10 bg-white/10 transition-all duration-300 shadow-sm blur-0"
                               )}>
                                 {attach.dataUrl ? (
                                   <img 
                                     src={attach.dataUrl} 
                                     alt={attach.name} 
-                                    className={cn(
-                                      "w-10 h-10 object-cover rounded border transition-colors duration-300",
-                                      activeBot ? bubbleStyle.attachBorder : "border-[#005c4b]"
-                                    )} 
+                                    className="w-10 h-10 object-cover rounded shadow-sm border border-white/5" 
                                     referrerPolicy="no-referrer" 
                                   />
                                 ) : (
-                                  <FileText className={cn("w-6 h-6 shrink-0 transition-colors duration-300", activeBot ? bubbleStyle.fileText : "text-emerald-400")} />
+                                  <FileText className="w-6 h-6 shrink-0 text-white/80" />
                                 )}
                                 <div className="flex-1 min-w-0 text-left">
-                                  <div className="font-bold truncate text-[11px] text-white">
+                                  <div className="font-semibold truncate text-[11px] text-white">
                                     {attach.name}
                                   </div>
-                                  <div className="text-[9px] text-zinc-300">
+                                  <div className="text-[9px] text-white/50">
                                     {(attach.size / 1024).toFixed(1)} KB
                                   </div>
                                 </div>
@@ -1646,12 +1918,12 @@ export const CompareChatView: React.FC = () => {
                         )}
 
                         {/* Content text */}
-                        <span className="relative z-10 leading-snug">{turn.content}</span>
+                        <div className="relative z-10 leading-snug whitespace-pre-wrap">{turn.content}</div>
                         {/* Embedded timestamp with checkmarks */}
-                        <span className="absolute bottom-1 right-2 text-[9px] text-zinc-100/70 font-mono select-none flex items-center gap-1">
+                        <div className="mt-1 flex items-center justify-end gap-1 text-[9px] text-white/60 font-mono select-none">
                           <span>{getFormattedTime(turn.timestamp)}</span>
-                          <CheckCheck className={cn("w-3.5 h-3.5 transition-colors duration-300", activeBot ? bubbleStyle.checkColor : "text-[#53bdeb]")} />
-                        </span>
+                          <CheckCheck className="w-3.5 h-3.5" />
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -1676,7 +1948,7 @@ export const CompareChatView: React.FC = () => {
                           <div className="space-y-4">
                             
                             {/* Tabs Switcher Navigation Bar */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-[#1e2a30] border border-[#2c3d46] rounded-2xl shrink-0 shadow-sm">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-white/70 border border-slate-200/55 rounded-2xl shrink-0 shadow-sm backdrop-blur-md">
                               <div className="flex flex-wrap items-center gap-1.5 scrollbar-none w-full sm:w-auto">
                                 <button
                                   type="button"
@@ -1684,15 +1956,15 @@ export const CompareChatView: React.FC = () => {
                                   className={cn(
                                     "px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all select-none cursor-pointer active:scale-95",
                                     currentTab === 'grid' 
-                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-[#00a884] text-white shadow-sm font-extrabold" 
-                                      : "text-zinc-300 hover:text-white hover:bg-[#202c33]/60 font-semibold"
+                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-indigo-600 text-white shadow-sm font-extrabold" 
+                                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 font-semibold"
                                   )}
                                 >
                                   <span>📊 Comparison Grid</span>
                                   {filteredResponses.length < modelResponses.length && (
                                     <span className={cn(
                                       "text-[10px] px-1.5 py-0.5 rounded font-mono font-bold",
-                                      activeBot ? theme.badge : "bg-emerald-500/20 text-emerald-400"
+                                      activeBot ? theme.badge : "bg-indigo-50 border-indigo-200 text-indigo-700"
                                     )}>
                                       {filteredResponses.length}/{modelResponses.length}
                                     </span>
@@ -1705,11 +1977,11 @@ export const CompareChatView: React.FC = () => {
                                   className={cn(
                                     "px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all select-none cursor-pointer active:scale-95",
                                     currentTab === 'advisor' 
-                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-[#00a884] text-white shadow-sm font-extrabold" 
-                                      : "text-zinc-300 hover:text-white hover:bg-[#202c33]/60 font-semibold"
+                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-indigo-600 text-white shadow-sm font-extrabold" 
+                                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 font-semibold"
                                   )}
                                 >
-                                  <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                                  <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
                                   <span>🤖 AI Suggestion Advisor</span>
                                 </button>
  
@@ -1719,11 +1991,11 @@ export const CompareChatView: React.FC = () => {
                                   className={cn(
                                     "px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all select-none cursor-pointer active:scale-95",
                                     currentTab === 'split' 
-                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-[#00a884] text-white shadow-sm font-extrabold" 
-                                      : "text-zinc-300 hover:text-white hover:bg-[#202c33]/60 font-semibold"
+                                      ? activeBot ? `${theme.bg} text-white shadow-sm font-extrabold` : "bg-indigo-600 text-white shadow-sm font-extrabold" 
+                                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 font-semibold"
                                   )}
                                 >
-                                  <GitCompare className="w-3.5 h-3.5 text-blue-400" />
+                                  <GitCompare className="w-3.5 h-3.5 text-indigo-600" />
                                   <span>⚖️ Dual Split Workspace</span>
                                 </button>
                               </div>
@@ -1731,7 +2003,7 @@ export const CompareChatView: React.FC = () => {
                               {/* Toggle board filter within Grid Tab */}
                               {currentTab === 'grid' && modelResponses.length > 0 && (
                                 <div className="flex flex-wrap items-center gap-1.5 max-w-full">
-                                  <span className="text-[10px] uppercase font-black text-zinc-350 select-none mr-1">Choose Models:</span>
+                                  <span className="text-[10px] uppercase font-black text-slate-500 select-none mr-1">Choose Models:</span>
                                   {modelResponses.map(mr => {
                                     const isChecked = allowedModelIds.includes(mr.modelId);
                                     return (
@@ -1747,8 +2019,8 @@ export const CompareChatView: React.FC = () => {
                                         className={cn(
                                           "px-2.5 py-1 rounded-xl text-[10px] font-bold border transition-all cursor-pointer active:scale-95",
                                           isChecked 
-                                            ? activeBot ? `${theme.badge} border-${colorName}-500/25` : "bg-[#005c4b]/30 border-[#00a884]/45 text-[#00e676]" 
-                                            : "bg-[#202c33]/65 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
+                                            ? activeBot ? `${theme.lightActiveBadge}` : "bg-indigo-50 border-indigo-200 text-indigo-700" 
+                                            : "bg-slate-50 border-slate-200 text-slate-650 hover:text-slate-900 hover:border-slate-300"
                                         )}
                                         title={`Toggle ${mr.modelName}`}
                                       >
@@ -1766,7 +2038,7 @@ export const CompareChatView: React.FC = () => {
                                 
                                 {/* If there are no results checked */}
                                 {filteredResponses.length === 0 ? (
-                                  <div className="p-12 text-center rounded-2xl border border-zinc-900 bg-[#111b21] w-full">
+                                  <div className="p-12 text-center rounded-2xl border border-zinc-900 bg-zinc-950 w-full">
                                     <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2 animate-bounce" />
                                     <h5 className="text-sm font-bold text-white">No Models Selected</h5>
                                     <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">Please select at least one AI model from the switchboard helper above to inspect its comparative output result.</p>
@@ -1775,7 +2047,7 @@ export const CompareChatView: React.FC = () => {
                                       onClick={() => setVisibleModelFilters(p => ({ ...p, [turn.id]: modelResponses.map(r => r.modelId) }))}
                                       className={cn(
                                         "mt-4 px-3 py-1.5 text-white text-xs font-bold rounded-xl transition-all cursor-pointer",
-                                        activeBot ? `${theme.bg} ${theme.hoverBg}` : "bg-[#00a884] hover:bg-[#00c99e]"
+                                        activeBot ? `${theme.bg} ${theme.hoverBg}` : "bg-indigo-650 hover:bg-indigo-550"
                                       )}
                                     >
                                       Display All Models
@@ -1807,33 +2079,27 @@ export const CompareChatView: React.FC = () => {
                                         <div 
                                           key={resp.modelId || idx}
                                           className={cn(
-                                            "border rounded-2xl p-4 flex flex-col justify-between transition-all duration-350 shadow-md group relative hover:-translate-y-0.5 text-white min-w-0 pr-4 pb-24",
+                                            "border rounded-[20px] rounded-tl-[6px] p-5 flex flex-col justify-between transition-all duration-350 shadow-sm group relative hover:-translate-y-0.5 text-slate-800 min-w-0 pb-28",
                                             cn(
-                                              "bg-[#202c33] border-zinc-900/60", 
-                                              isUserPreferred && "border-amber-500/40 bg-[#25241b] shadow-[0_4px_16px_rgba(245,158,11,0.04)]",
-                                              (!isUserPreferred && isWinner) && "border-emerald-500/40 bg-[#112320]"
+                                              "bg-white/85 border-slate-200/60", 
+                                              isUserPreferred && "border-amber-400 bg-amber-50/50 shadow-[0_4px_16px_rgba(245,158,11,0.04)]",
+                                              (!isUserPreferred && isWinner) && "border-emerald-300 bg-emerald-50/50"
                                             )
                                           )}
                                         >
                                           
-                                          {/* Speech bubble pointer */}
-                                          <div className={cn(
-                                            "absolute top-0 -left-1 w-3.5 h-3.5 rotate-45 transform origin-top-left rounded-bl-sm -z-0",
-                                            isUserPreferred ? "bg-[#25241b]" : (isWinner ? "bg-[#112320]" : "bg-[#202c33]")
-                                          )} />
-
                                           <div className="relative z-10 w-full">
                                             
                                             {/* Card header */}
-                                            <div className="flex items-center justify-between border-b border-zinc-900/40 pb-2.5 mb-3.5 shrink-0">
+                                            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3.5 shrink-0">
                                               <div className="flex items-center gap-1.5 min-w-0">
                                                 <span className={cn(
                                                   "text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-widest font-mono shrink-0",
-                                                  resp.provider === 'gemini' && "bg-blue-500/10 text-blue-400 border border-blue-500/15",
-                                                  resp.provider === 'openai' && "bg-emerald-500/10 text-[#00a884] border border-emerald-500/15",
-                                                  resp.provider === 'anthropic' && "bg-orange-500/10 text-orange-400 border border-orange-500/15",
-                                                  resp.provider === 'groq' && "bg-pink-500/10 text-pink-400 border border-pink-500/15",
-                                                  resp.provider === 'deepseek' && "bg-cyan-500/10 text-cyan-400 border border-cyan-500/15"
+                                                  resp.provider === 'gemini' && "bg-blue-50 text-blue-600 border border-blue-200/60",
+                                                  resp.provider === 'openai' && "bg-emerald-50 text-emerald-600 border border-emerald-200/60",
+                                                  resp.provider === 'anthropic' && "bg-orange-50 text-orange-600 border border-orange-200/60",
+                                                  resp.provider === 'groq' && "bg-pink-50 text-pink-600 border border-pink-200/60",
+                                                  resp.provider === 'deepseek' && "bg-cyan-50 text-cyan-600 border border-cyan-200/60"
                                                 )}>
                                                   {resp.provider}
                                                 </span>
@@ -1847,18 +2113,18 @@ export const CompareChatView: React.FC = () => {
                                                   type="button"
                                                   onClick={() => copyToClipboard(resp.content, responseKey)}
                                                   title="Copy response body"
-                                                  className="p-1 rounded bg-zinc-950/40 border border-zinc-900 hover:bg-zinc-900/60 hover:text-white transition-all text-zinc-400 cursor-pointer active:scale-95"
+                                                  className="p-1 rounded bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-800 transition-all text-slate-500 cursor-pointer active:scale-95"
                                                 >
-                                                  {isCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                                                  {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                                                 </button>
                                                 
                                                 {isUserPreferred && (
-                                                  <span className="flex items-center gap-0.5 text-[8px] font-extrabold text-amber-400 bg-amber-950 border border-amber-500/20 px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide">
+                                                  <span className="flex items-center gap-0.5 text-[8px] font-extrabold text-amber-700 bg-amber-50 border border-amber-300 px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide">
                                                     ⭐ CHOSEN BEST
                                                   </span>
                                                 )}
                                                 {!isUserPreferred && isWinner && (
-                                                  <span className="flex items-center gap-0.5 text-[8px] font-extrabold text-[#fafafa] bg-emerald-500/90 px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide">
+                                                  <span className="flex items-center gap-0.5 text-[8px] font-extrabold text-[#fafafa] bg-emerald-500 px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide">
                                                     WINNER
                                                   </span>
                                                 )}
@@ -1867,12 +2133,12 @@ export const CompareChatView: React.FC = () => {
 
                                             {/* Card body markdown */}
                                             {resp.error ? (
-                                              <div className="bg-red-950/20 text-red-400 text-[11px] p-2.5 rounded-xl border border-red-500/10 flex items-start gap-2">
+                                              <div className="bg-red-50 text-red-700 text-[11px] p-2.5 rounded-xl border border-red-200/60 flex items-start gap-2">
                                                 <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500 mt-0.5" />
                                                 <span className="font-mono">{resp.error}</span>
                                               </div>
                                             ) : (
-                                              <div className="prose prose-invert prose-xs max-w-none text-zinc-300 text-xs overflow-x-hidden leading-relaxed break-words scrollbar-none font-sans select-text">
+                                              <div className="prose prose-xs max-w-none text-slate-700 text-xs overflow-x-hidden leading-relaxed break-words scrollbar-none font-sans select-text">
                                                 <Markdown>{resp.content}</Markdown>
                                               </div>
                                             )}
@@ -1880,7 +2146,7 @@ export const CompareChatView: React.FC = () => {
                                           </div>
 
                                           {/* Embedded actions bar at bottom */}
-                                          <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2.5 pt-2 border-t border-zinc-900/35">
+                                          <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2.5 pt-2 border-t border-slate-150">
                                             
                                             {/* "Select as Preferred" interactive element */}
                                             <button
@@ -1892,14 +2158,14 @@ export const CompareChatView: React.FC = () => {
                                               className={cn(
                                                 "w-full py-1.5 rounded-xl border text-[10px] font-extrabold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center justify-center gap-1.5",
                                                 isUserPreferred
-                                                  ? "bg-amber-500/15 border-amber-500/40 text-amber-400"
-                                                  : "bg-zinc-950/15 border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                                  ? "bg-amber-50 border-amber-300 text-amber-700"
+                                                  : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all font-bold"
                                               )}
                                             >
                                               <span>{isUserPreferred ? "★ Preferred Outcome Selected" : "☆ Choose Model Result as Best"}</span>
                                             </button>
 
-                                            <div className="flex items-center justify-between text-[9px] text-zinc-500 font-mono">
+                                            <div className="flex items-center justify-between text-[9px] text-slate-500 font-mono">
                                               <div className="flex items-center gap-2">
                                                 <span className="flex items-center gap-0.5">
                                                   <Clock className="w-2.5 h-2.5" /> {resp.latency ? `${(resp.latency / 1000).toFixed(2)}s` : 'N/A'}
@@ -1912,7 +2178,7 @@ export const CompareChatView: React.FC = () => {
                                               <div className="flex items-center gap-1 select-none pr-0.5">
                                                 <span>{getFormattedTime(turn.timestamp)}</span>
                                                 {isWinner ? (
-                                                  <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />
+                                                  <CheckCheck className="w-3.5 h-3.5 text-indigo-600" />
                                                 ) : (
                                                   <Check className="w-3 h-3" />
                                                 )}
@@ -1933,27 +2199,27 @@ export const CompareChatView: React.FC = () => {
                                 
                                 {/* WINNER CARD PANEL */}
                                 {turn.evaluation?.winner ? (
-                                  <div className="rounded-2xl p-5 border shadow-md bg-[#182229] border-emerald-500/25 space-y-3">
+                                  <div className="rounded-2xl p-5 border shadow-sm bg-indigo-50/70 border-indigo-200/80 space-y-3">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border bg-[#005c4b]/30 border-emerald-500/30 text-[#00a884]">
-                                        <Trophy className="w-5 h-5 text-emerald-400 animate-bounce" />
+                                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border bg-indigo-100/60 border-indigo-200/60 text-indigo-600">
+                                        <Trophy className="w-5 h-5 text-indigo-600 animate-bounce" />
                                       </div>
                                       <div>
-                                        <span className="font-extrabold uppercase tracking-widest text-[9.5px] text-[#00e676] block">
+                                        <span className="font-extrabold uppercase tracking-widest text-[9.5px] text-indigo-650 block">
                                           🏆 AI RECOMMENDED BEST MODEL
                                         </span>
-                                        <h4 className="text-white font-extrabold text-sm flex items-center gap-1.5 mt-0.5">
+                                        <h4 className="text-slate-800 font-extrabold text-sm flex items-center gap-1.5 mt-0.5">
                                           <span>{turn.evaluation.winner.provider?.toUpperCase()}</span>
-                                          <span className="text-xs text-zinc-400">({turn.evaluation.winner.modelId})</span>
+                                          <span className="text-xs text-slate-500">({turn.evaluation.winner.modelId})</span>
                                         </h4>
                                       </div>
                                     </div>
-                                    <p className="text-zinc-200 text-xs sm:text-sm leading-relaxed pt-2 border-t border-zinc-800/40 italic">
+                                    <p className="text-slate-700 text-xs sm:text-sm leading-relaxed pt-2 border-t border-indigo-100/60 font-semibold italic">
                                       "{turn.evaluation.winner.reason}"
                                     </p>
                                   </div>
                                 ) : (
-                                  <div className="p-8 text-center rounded-2xl bg-[#111b21] border border-zinc-850">
+                                  <div className="p-8 text-center rounded-2xl bg-zinc-950/65 border border-zinc-900">
                                     <HelpCircle className="w-8 h-8 text-zinc-500 mx-auto mb-2" />
                                     <h5 className="text-sm font-bold text-zinc-300">Evaluating Multi-model Outputs</h5>
                                     <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">AI is synthesizing metrics to declare the best response. Send a query first.</p>
@@ -1962,28 +2228,28 @@ export const CompareChatView: React.FC = () => {
 
                                 {/* RATING SCORES METER GRID */}
                                 {turn.evaluation?.ratings && turn.evaluation.ratings.length > 0 ? (
-                                  <div className="bg-[#111b21] p-5 rounded-2xl border border-zinc-850 space-y-4">
-                                    <h4 className="text-xs font-extrabold text-[#00a884] uppercase tracking-widest flex items-center gap-1.5">
-                                      <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                                  <div className="bg-zinc-950/85 p-5 rounded-2xl border border-zinc-850 space-y-4">
+                                    <h4 className="text-xs font-extrabold text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                                      <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
                                       <span>Model Scorecard Synthesizer Matrix</span>
                                     </h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
                                       {turn.evaluation.ratings.map(rating => {
                                         const scorePercent = (rating.overallScore || 0) * 10;
                                         return (
-                                          <div key={`${rating.provider}-${rating.modelId}`} className="bg-[#202c33]/50 p-4 rounded-xl border border-zinc-850 space-y-2.5">
+                                          <div key={`${rating.provider}-${rating.modelId}`} className="bg-zinc-900/60 p-4 rounded-xl border border-zinc-850 space-y-2.5">
                                             <div className="flex justify-between items-center">
                                               <div className="flex items-center gap-1.5 min-w-0">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
                                                 <span className="font-extrabold text-zinc-100 truncate text-xs">{rating.provider.toUpperCase()} <span className="text-zinc-500 font-normal">({rating.modelId})</span></span>
                                               </div>
-                                              <span className="font-mono text-xs text-[#00e676] font-extrabold">{rating.overallScore?.toFixed(1) || '0.0'} / 10.0</span>
+                                              <span className="font-mono text-xs text-indigo-400 font-extrabold">{rating.overallScore?.toFixed(1) || '0.0'} / 10.0</span>
                                             </div>
 
                                             {/* Progress meter */}
                                             <div className="w-full h-2 bg-zinc-950 rounded-full overflow-hidden">
                                               <div 
-                                                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-[#00a884] transition-all duration-300"
+                                                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300"
                                                 style={{ width: `${scorePercent}%` }}
                                               />
                                             </div>
@@ -2027,8 +2293,8 @@ export const CompareChatView: React.FC = () => {
 
                                 {/* SUMMARY TEXT BANNER */}
                                 {turn.evaluation?.comparisonSummary && (
-                                  <div className="bg-[#111b21] p-5 rounded-2xl border border-zinc-850 w-full">
-                                    <span className="text-[8.5px] uppercase font-extrabold tracking-widest text-[#00a884] block mb-1">Synthesizer Evaluation Summary</span>
+                                  <div className="bg-zinc-950/80 p-5 rounded-2xl border border-zinc-850 w-full">
+                                    <span className="text-[8.5px] uppercase font-extrabold tracking-widest text-indigo-400 block mb-1">Synthesizer Evaluation Summary</span>
                                     <p className="text-zinc-350 text-xs sm:text-sm leading-relaxed select-text">{turn.evaluation.comparisonSummary}</p>
                                   </div>
                                 )}
@@ -2039,32 +2305,32 @@ export const CompareChatView: React.FC = () => {
                               <div className="space-y-4 animate-fade-in w-full">
                                 
                                 {/* SELECTORS HEADBOARD */}
-                                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#111b21] p-4 rounded-2xl border border-zinc-850 w-full">
+                                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white/70 p-4 rounded-2xl border border-slate-200/60 w-full shadow-sm backdrop-blur-md">
                                   <div className="flex flex-wrap items-center gap-3.5">
-                                    <div className="flex items-center gap-2 bg-[#202c33] px-3 py-1.5 rounded-xl border border-zinc-800">
-                                      <span className="text-[10px] font-extrabold tracking-wide text-zinc-450 uppercase">Model A:</span>
+                                    <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                                      <span className="text-[10px] font-extrabold tracking-wide text-slate-500 uppercase">Model A:</span>
                                       <select
                                         value={activeA}
                                         onChange={e => setSplitModelA(p => ({ ...p, [turn.id]: e.target.value }))}
-                                        className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer pr-1"
+                                        className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer pr-1"
                                       >
                                         {modelResponses.map(r => (
-                                          <option key={r.modelId} value={r.modelId} className="bg-[#111b21] text-zinc-200 font-bold">{r.modelName}</option>
+                                          <option key={r.modelId} value={r.modelId} className="bg-white text-slate-700 font-bold">{r.modelName}</option>
                                         ))}
                                       </select>
                                     </div>
                                     
-                                    <div className="text-zinc-650 text-xs font-extrabold font-mono uppercase">VS</div>
+                                    <div className="text-slate-400 text-xs font-extrabold font-mono uppercase">VS</div>
 
-                                    <div className="flex items-center gap-2 bg-[#202c33] px-3 py-1.5 rounded-xl border border-zinc-800">
-                                      <span className="text-[10px] font-extrabold tracking-wide text-[#00a884] uppercase">Model B:</span>
+                                    <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                                      <span className="text-[10px] font-extrabold tracking-wide text-indigo-600 uppercase">Model B:</span>
                                       <select
                                         value={activeB}
                                         onChange={e => setSplitModelB(p => ({ ...p, [turn.id]: e.target.value }))}
-                                        className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer pr-1"
+                                        className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer pr-1"
                                       >
                                         {modelResponses.map(r => (
-                                          <option key={r.modelId} value={r.modelId} className="bg-[#111b21] text-zinc-200 font-bold">{r.modelName}</option>
+                                          <option key={r.modelId} value={r.modelId} className="bg-white text-slate-700 font-bold">{r.modelName}</option>
                                         ))}
                                       </select>
                                     </div>
@@ -2095,7 +2361,7 @@ export const CompareChatView: React.FC = () => {
                                   
                                   {/* Model A Column */}
                                   {respA ? (
-                                    <div className="bg-[#202c33] border border-zinc-850 p-4 rounded-2xl flex flex-col justify-between relative text-white pb-24">
+                                    <div className="bg-white/85 border border-slate-200/60 p-4 rounded-2xl flex flex-col justify-between relative text-slate-800 pb-24 backdrop-blur-md">
                                       <div className="w-full">
                                         <div className="flex items-center justify-between border-b border-zinc-900/40 pb-2.5 mb-3">
                                           <div className="flex items-center gap-1.5 min-w-0">
@@ -2107,7 +2373,7 @@ export const CompareChatView: React.FC = () => {
                                               type="button"
                                               onClick={() => copyToClipboard(respA.content, `${turn.id}-split-A`)}
                                               title="Copy Model A answer"
-                                              className="p-1 rounded bg-zinc-950/45 border border-zinc-900 hover:bg-zinc-900 text-zinc-400 hover:text-white transition-all cursor-pointer"
+                                              className="p-1 rounded bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
                                             >
                                               <Copy className="w-3.5 h-3.5" />
                                             </button>
@@ -2116,12 +2382,12 @@ export const CompareChatView: React.FC = () => {
                                             )}
                                           </div>
                                         </div>
-                                        <div className="prose prose-invert prose-xs text-xs text-zinc-300 leading-relaxed font-sans max-w-none select-text">
+                                        <div className="prose prose-xs text-xs text-slate-700 leading-relaxed font-sans max-w-none select-text">
                                           <Markdown>{respA.content}</Markdown>
                                         </div>
                                       </div>
 
-                                      <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2 pt-2 border-t border-zinc-900/20">
+                                      <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2 pt-2 border-t border-slate-150">
                                         <button
                                           type="button"
                                           onClick={() => {
@@ -2131,8 +2397,8 @@ export const CompareChatView: React.FC = () => {
                                           className={cn(
                                             "w-full py-1.5 rounded-xl border text-[9px] font-extrabold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center justify-center gap-1.5",
                                             preferredModels[turn.id] === respA.modelId
-                                              ? "bg-amber-500/15 border-amber-500/40 text-amber-400"
-                                              : "bg-zinc-950/15 border-zinc-800 hover:border-zinc-750 text-zinc-400 hover:text-zinc-200"
+                                              ? "bg-amber-50 border-amber-300 text-amber-700"
+                                              : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all font-bold"
                                           )}
                                         >
                                           <span>{preferredModels[turn.id] === respA.modelId ? "★ Preferred Choice" : "Select as Best"}</span>
@@ -2144,14 +2410,14 @@ export const CompareChatView: React.FC = () => {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="bg-[#202c33]/30 border border-zinc-900 text-zinc-400 text-xs italic flex items-center justify-center p-8 rounded-2xl h-40">
+                                    <div className="bg-slate-50 border border-slate-200 text-slate-400 text-xs italic flex items-center justify-center p-8 rounded-2xl h-40">
                                       Please select Model A from options above.
                                     </div>
                                   )}
 
                                   {/* Model B Column */}
                                   {respB ? (
-                                    <div className="bg-[#202c33] border border-zinc-850 p-4 rounded-2xl flex flex-col justify-between relative text-white pb-24">
+                                    <div className="bg-white/85 border border-slate-200/60 p-4 rounded-2xl flex flex-col justify-between relative text-slate-800 pb-24 backdrop-blur-md">
                                       <div className="w-full">
                                         <div className="flex items-center justify-between border-b border-zinc-900/40 pb-2.5 mb-3">
                                           <div className="flex items-center gap-1.5 min-w-0">
@@ -2163,7 +2429,7 @@ export const CompareChatView: React.FC = () => {
                                               type="button"
                                               onClick={() => copyToClipboard(respB.content, `${turn.id}-split-B`)}
                                               title="Copy Model B answer"
-                                              className="p-1 rounded bg-zinc-950/45 border border-zinc-900 hover:bg-zinc-900 text-zinc-400 hover:text-white transition-all cursor-pointer"
+                                              className="p-1 rounded bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
                                             >
                                               <Copy className="w-3.5 h-3.5" />
                                             </button>
@@ -2172,12 +2438,12 @@ export const CompareChatView: React.FC = () => {
                                             )}
                                           </div>
                                         </div>
-                                        <div className="prose prose-invert prose-xs text-xs text-zinc-300 leading-relaxed font-sans max-w-none select-text">
+                                        <div className="prose prose-xs text-xs text-slate-700 leading-relaxed font-sans max-w-none select-text">
                                           <Markdown>{respB.content}</Markdown>
                                         </div>
                                       </div>
 
-                                      <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2 pt-2 border-t border-zinc-900/20">
+                                      <div className="absolute bottom-2 left-3 right-3 flex flex-col gap-2 pt-2 border-t border-slate-150">
                                         <button
                                           type="button"
                                           onClick={() => {
@@ -2187,8 +2453,8 @@ export const CompareChatView: React.FC = () => {
                                           className={cn(
                                             "w-full py-1.5 rounded-xl border text-[9px] font-extrabold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center justify-center gap-1.5",
                                             preferredModels[turn.id] === respB.modelId
-                                              ? "bg-amber-500/15 border-amber-500/40 text-amber-400"
-                                              : "bg-zinc-950/15 border-zinc-800 hover:border-zinc-750 text-zinc-400 hover:text-zinc-200"
+                                              ? "bg-amber-50 border-amber-300 text-amber-700"
+                                              : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all font-bold"
                                           )}
                                         >
                                           <span>{preferredModels[turn.id] === respB.modelId ? "★ Preferred Choice" : "Select as Best"}</span>
@@ -2200,7 +2466,7 @@ export const CompareChatView: React.FC = () => {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="bg-[#202c33]/30 border border-zinc-900 text-zinc-400 text-xs italic flex items-center justify-center p-8 rounded-2xl h-40">
+                                    <div className="bg-slate-50 border border-slate-200 text-slate-400 text-xs italic flex items-center justify-center p-8 rounded-2xl h-40">
                                       Please select Model B from options above.
                                     </div>
                                   )}
@@ -2233,8 +2499,8 @@ export const CompareChatView: React.FC = () => {
                   selectedModelIds.length >= 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
                 )}>
                   {AVAILABLE_MODELS.filter(m => selectedModelIds.includes(m.id)).map(m => (
-                    <div key={m.id} className="border bg-[#202c33] border-zinc-900/60 rounded-2xl p-4 space-y-3 animate-pulse relative">
-                      <div className="absolute top-0 -left-1 w-3.5 h-3.5 rotate-45 transform origin-top-left rounded-bl-sm bg-[#202c33]" />
+                    <div key={m.id} className="border bg-zinc-900/65 border-zinc-850 rounded-2xl p-4 space-y-3 animate-pulse relative">
+                      <div className="absolute top-0 -left-1 w-3.5 h-3.5 rotate-45 transform origin-top-left rounded-bl-sm bg-zinc-900" />
                       
                       <div className="flex justify-between pb-2 border-b border-zinc-805">
                         <div className="flex items-center gap-2">
@@ -2264,373 +2530,16 @@ export const CompareChatView: React.FC = () => {
             onDrop={handleDrop}
             className={cn(
               "p-4 shrink-0 relative overflow-visible z-20 transition-all duration-200 border-t",
-              activeBot ? `bg-[#121c22]/95 border-${colorName}-500/10` : "bg-[#111b21] border-[#222e35]/60",
+              activeBot ? "bg-white border-slate-200/80 shadow-md" : "bg-[#f8fafc]/95 border-slate-200/80 backdrop-blur-md shadow-sm",
               isDragging 
-                ? activeBot ? `border-${colorName}-500 bg-[#18262f]` : "border-[#00a884]/80 bg-[#152026]"
+                ? activeBot ? `border-${colorName}-400 bg-slate-50` : "border-indigo-400 bg-slate-50"
                 : "",
               attachments.length > 0 ? "pb-5" : ""
             )}
           >
             {activeBot && (
-              <div className={cn("absolute inset-0 opacity-[0.06] pointer-events-none", theme.glow)} />
+              <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none", theme.glow)} />
             )}
-            {/* Quick Interactive Model Chooser panel exactly as requested above the input box */}
-            {isModelChooserCollapsed ? (
-                <div 
-                  onClick={() => setIsModelChooserCollapsed(false)} 
-                  className="max-w-5xl mx-auto mb-3 bg-[#182229]/95 py-2 px-4 border border-[#2c3d46]/85 rounded-xl hover:bg-[#1f2b34] hover:border-[#384e5a] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg select-none group animate-fade-in text-white animate-fade-in relative z-10"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0" onClick={(e) => e.stopPropagation()}>
-                    <span className="relative flex h-2 w-2 shrink-0">
-                      <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", activeBot ? theme.glow : "bg-[#00e676]")}></span>
-                      <span className={cn("relative inline-flex rounded-full h-2 w-2", activeBot ? theme.glow : "bg-[#00a884]")}></span>
-                    </span>
-                    <div className="flex items-center gap-3.5 flex-wrap min-w-0">
-                      {/* For What Purpose / Focus Mode Dropdown */}
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[10.5px] font-black text-zinc-150 uppercase tracking-widest">Purpose:</span>
-                        <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsDropdownOpen(!isDropdownOpen);
-                              setIsModelDropdownOpen(false);
-                            }}
-                            className={cn(
-                              "flex items-center gap-1.5 bg-[#202c33]/95 border pl-2.5 pr-7 py-1 rounded-xl text-[10.5px] font-black uppercase tracking-wide cursor-pointer font-mono outline-none focus:ring-1 focus:ring-[#00e676]/30 transition-all shadow-sm relative border-zinc-650 hover:border-zinc-500",
-                              (selectedPurposeId || 'default') === 'default' ? "bg-[#005c4b]/30 border-[#00a884]/45 text-[#00ff88]" :
-                              (selectedPurposeId || 'default') === 'coding' ? "bg-blue-500/20 border-blue-505/35 text-blue-300" :
-                              (selectedPurposeId || 'default') === 'image' ? "bg-rose-500/20 border-rose-505/35 text-rose-300" :
-                              (selectedPurposeId || 'default') === 'content' ? "bg-purple-500/20 border-purple-505/35 text-purple-300" :
-                              (selectedPurposeId || 'default') === 'reasoning' ? "bg-amber-500/20 border-amber-505/35 text-amber-300" :
-                              (selectedPurposeId || 'default') === 'speed' ? "bg-cyan-500/20 border-cyan-505/35 text-cyan-300" :
-                              "bg-[#202c33]/90 text-[#00ff88]"
-                            )}
-                          >
-                            <span className="flex items-center gap-1 truncate max-w-[110px]">
-                              <span>{AI_PURPOSES.find(p => p.id === (selectedPurposeId || 'default'))?.emoji || '💬'}</span>
-                              <span>{AI_PURPOSES.find(p => p.id === (selectedPurposeId || 'default'))?.name || 'Default'}</span>
-                            </span>
-                            <span className="w-2"></span>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-zinc-400">
-                              <ChevronDown className={cn("w-3 h-3 transition-transform", isDropdownOpen && "rotate-180")} />
-                            </div>
-                          </button>
-
-                          {isDropdownOpen && (
-                            <>
-                              {/* Backdrop to capture outside taps & clicks */}
-                              <div 
-                                className="fixed inset-0 z-40 bg-black/15" 
-                                onClick={() => setIsDropdownOpen(false)}
-                              />
-                              <div className="absolute left-0 bottom-full mb-2 w-56 rounded-xl bg-[#1e2a30] border border-[#2c3d46] shadow-2xl py-1 z-50 animate-fade-in text-white divide-y divide-[#2a3942]/45">
-                                {AI_PURPOSES.map(p => {
-                                  const isSelected = (selectedPurposeId || 'default') === p.id;
-                                  return (
-                                    <button
-                                      key={p.id}
-                                      type="button"
-                                      onClick={() => {
-                                        handlePurposeSelect(p.id || 'default');
-                                        setIsDropdownOpen(false);
-                                      }}
-                                      className={cn(
-                                        "w-full text-left px-3.5 py-2.5 text-[11px] font-bold flex items-center justify-between hover:bg-[#2c3d46] active:bg-[#374c58] transition-all first:rounded-t-xl last:rounded-b-xl",
-                                        isSelected ? "text-[#00e676] bg-[#005c4b]/15" : "text-zinc-200"
-                                      )}
-                                    >
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-sm select-none">{p.emoji}</span>
-                                        <span className="tracking-wide select-none">{p.name}</span>
-                                      </div>
-                                      {isSelected && <span className="text-[10px] text-[#00e676] font-bold select-none">✓</span>}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* AI Model Section Dropdown */}
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[10.5px] font-black text-zinc-150 uppercase tracking-widest">AI Models:</span>
-                        <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsModelDropdownOpen(!isModelDropdownOpen);
-                              setIsDropdownOpen(false);
-                            }}
-                            className="flex items-center gap-1.5 bg-[#202c33]/95 border border-zinc-650 hover:border-zinc-500 pl-2.5 pr-7 py-1 rounded-xl text-[10.5px] font-black uppercase tracking-wide cursor-pointer font-mono text-zinc-100 outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all shadow-sm relative"
-                          >
-                            <span className="flex items-center gap-1 truncate max-w-[110px]">
-                              🤖 {selectedModelIds.length} Channels
-                            </span>
-                            <span className="w-2"></span>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-zinc-300">
-                              <ChevronDown className={cn("w-3 h-3 transition-transform", isModelDropdownOpen && "rotate-180")} />
-                            </div>
-                          </button>
-
-                          {isModelDropdownOpen && (
-                            <>
-                              {/* Backdrop to capture outside clicks */}
-                              <div 
-                                className="fixed inset-0 z-40 bg-black/15" 
-                                onClick={() => setIsModelDropdownOpen(false)}
-                              />
-                              <div className="absolute left-0 bottom-full mb-2 w-64 rounded-xl bg-[#1e2a30] border border-[#2c3d46] shadow-2xl py-1.5 z-50 animate-fade-in text-white divide-y divide-[#2a3942]/45">
-                                <div className="px-3.5 py-2 text-[8.5px] uppercase tracking-widest text-zinc-400 font-extrabold">
-                                  Toggle Active AI Channels
-                                </div>
-                                <div className="max-h-56 overflow-y-auto py-1 divide-y divide-zinc-800/25">
-                                  {AVAILABLE_MODELS.map(m => {
-                                    const active = selectedModelIds.includes(m.id);
-                                    return (
-                                      <button
-                                        key={m.id}
-                                        type="button"
-                                        onClick={() => handleModelToggle(m.id)}
-                                        className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-[#2c3d46] active:bg-[#374c58] transition-all"
-                                      >
-                                        <div className="flex items-center gap-2 min-w-0">
-                                          <div className={cn(
-                                            "w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all",
-                                            active ? "bg-[#00a884] border-[#00a884] text-white" : "border-zinc-700 bg-transparent"
-                                          )}>
-                                            {active && <Check className="w-2.5 h-2.5 stroke-[4px]" />}
-                                          </div>
-                                          <div className="truncate">
-                                            <div className="text-[10px] font-bold text-zinc-100 truncate">{m.name}</div>
-                                            <div className="text-[8px] text-zinc-500 font-mono tracking-wider">{m.provider}</div>
-                                          </div>
-                                        </div>
-                                        {m.requiresKey && !keys[m.keyName] && (
-                                          <span className="text-[7px] bg-red-950/45 text-red-400 px-1 py-0.5 rounded border border-red-500/20 font-bold shrink-0 font-mono">
-                                            ⚠ NO KEY
-                                          </span>
-                                        )}
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-[#00a884] group-hover:text-[#00c99e] shrink-0 self-end sm:self-auto leading-none">
-                    <span>Advanced Tuning</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200 transition-transform" />
-                  </div>
-                </div>
-              ) : (
-                <div className="max-w-5xl mx-auto mb-3.5 bg-[#182229] p-4 rounded-2xl border border-[#2c3d46]/90 shadow-2xl animate-fade-in text-white max-h-[290px] xs:max-h-[370px] sm:max-h-[470px] md:max-h-[58vh] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-850">
-                  {/* Header with Preset Quick-controls & counters */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-[#222e35]/65">
-                    <div className="flex items-center gap-2.5 select-none">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#00a884] animate-pulse shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[11px] tracking-wider uppercase font-extrabold text-[#00a884]">
-                          Goal Selection Console
-                        </span>
-                        <span className="text-[9.5px] text-zinc-400 font-medium">
-                          Select your primary task focus. Best suited AI models will automatically cooperate side-by-side.
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Active model counter badge and collapse triggers */}
-                    <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
-                      <span className="bg-[#005c4b]/35 border border-[#00a884]/35 px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-[#00e676] tracking-wide font-mono shadow-inner select-none">
-                        🎯 {selectedModelIds.length} Active Channels
-                      </span>
-
-                      <button 
-                        type="button" 
-                        onClick={() => {
-                          setIsModelChooserCollapsed(true);
-                          toast.info("Collapsed Selection Console. Tap the active models bar to expand again.");
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-[#202c33] hover:bg-[#2c3d46] border border-[#2c3d46]/70 rounded-xl text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer active:scale-95"
-                      >
-                        <span>Collapse</span>
-                        <ChevronUp className="w-3.5 h-3.5 text-zinc-400" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* 1. Choose Your Action Goal: */}
-                  <div className="mb-4.5 select-none">
-                    <span className="text-[9px] font-extrabold uppercase text-zinc-400 tracking-widest mb-2 block select-none">
-                      1. For what purpose do you want to use the AI models?
-                    </span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 w-full">
-                      {AI_PURPOSES.map(p => {
-                        const isSelected = matchedPurpose?.id === p.id;
-                        const IconComponent = p.icon;
-
-                        return (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() => handlePurposeSelect(p.id)}
-                            className={cn(
-                              "p-3 rounded-xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 text-white active:scale-95 relative overflow-hidden group min-h-[110px]",
-                              isSelected 
-                                ? "bg-gradient-to-br border-emerald-500/60 shadow-[0_0_12px_rgba(16,185,129,0.1)] ring-1 ring-emerald-500/20 " + p.bannerColor
-                                : "bg-[#202c33]/40 border-zinc-900/60 hover:border-zinc-800 hover:bg-[#202c33]/70 text-zinc-300"
-                            )}
-                          >
-                            <div className="flex items-start justify-between w-full">
-                              <div className={cn(
-                                "w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-all shadow-sm shrink-0",
-                                isSelected 
-                                  ? "bg-[#00e676] text-[#0b141a]" 
-                                  : "bg-zinc-950/60 text-zinc-400 group-hover:text-zinc-200"
-                              )}>
-                                <IconComponent className="w-3.5 h-3.5" />
-                              </div>
-                              
-                              {/* Selection tick dot */}
-                              <div className={cn(
-                                "w-3 h-3 rounded-full border flex items-center justify-center text-[7px] text-white shrink-0 font-bold",
-                                isSelected ? "bg-[#00e676] border-[#00e676] text-[#0b141a]" : "border-zinc-700 bg-zinc-950/40"
-                              )}>
-                                {isSelected && "✓"}
-                              </div>
-                            </div>
-
-                            <div className="mt-1">
-                              <span className="font-extrabold text-[10.5px] block leading-snug group-hover:text-white truncate">
-                                {p.emoji} {p.name.split(" / ")[0]}
-                              </span>
-                              <span className="text-[8.5px] text-zinc-400 font-medium leading-normal mt-0.5 block line-clamp-2">
-                                {p.desc}
-                              </span>
-                            </div>
-
-                            {/* Micro recommended block line */}
-                            <div className="text-[7.5px] text-zinc-500 font-mono mt-0.5 border-t border-zinc-805/30 pt-1 flex items-center justify-between w-full font-sans">
-                              <span>Cooperating:</span>
-                              <span className={cn("font-bold", isSelected ? "text-emerald-400" : "text-zinc-400")}>{p.recommendedModelIds.length} models</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 2. Manual Custom Override Switches */}
-                  <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-[#222e35]/40 mt-3 select-none">
-                    <span className="text-[9px] font-extrabold uppercase text-zinc-400 tracking-widest">
-                      2. Optional Model Overrides (Fine-tune your cooperative group)
-                    </span>
-                    
-                    {!matchedPurpose && (
-                      <span className="text-[8.5px] text-[#00e676] bg-emerald-500/10 border border-emerald-500/35 px-1.5 py-0.2 rounded font-mono shadow-sm select-none">
-                        ⚙️ CUSTOM Suite Mode
-                      </span>
-                    )}
-                  </div>
-
-                  {/* The Models grid grouped by tier/provider cleanly */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 max-w-full">
-                    {AVAILABLE_MODELS.map(m => {
-                      const active = selectedModelIds.includes(m.id);
-                      const missingKey = m.requiresKey && !keys[m.keyName];
-                      
-                      return (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onClick={() => handleModelToggle(m.id)}
-                          className={cn(
-                            "p-2.5 rounded-xl text-left border transition-all duration-200 cursor-pointer select-none active:scale-95 flex flex-col justify-between gap-1 h-full relative overflow-hidden group",
-                            active 
-                              ? m.provider === 'gemini' ? "bg-blue-950/20 border-blue-500/40 text-blue-200 ring-1 ring-blue-500/20" :
-                                m.provider === 'openai' ? "bg-emerald-950/20 border-emerald-500/40 text-[#53dfa3] ring-1 ring-emerald-500/20" :
-                                m.provider === 'anthropic' ? "bg-orange-950/20 border-orange-500/35 text-orange-200 ring-1 ring-orange-500/20" :
-                                m.provider === 'groq' ? "bg-pink-950/20 border-pink-500/35 text-pink-200 ring-1 ring-pink-500/20" :
-                                "bg-cyan-950/20 border-cyan-500/35 text-cyan-200 ring-1 ring-cyan-500/20"
-                              : "bg-[#202c33]/45 border-zinc-900/60 text-zinc-550 hover:text-zinc-300 hover:border-zinc-800"
-                          )}
-                          title={m.desc || ''}
-                        >
-                          {/* Provider Stamp Badge decoration inside card */}
-                          <span className={cn(
-                            "absolute top-0.5 right-1.5 text-[7.5px] font-mono font-extrabold uppercase tracking-widest pointer-events-none",
-                            active ? "opacity-60 text-current" : "opacity-25 text-zinc-650"
-                          )}>
-                            {m.provider}
-                          </span>
-
-                          {/* Model title and selection checkbox mimic */}
-                          <div className="flex items-center gap-2 w-full mt-0.5">
-                            <div className={cn(
-                              "w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all",
-                              active
-                                ? m.provider === 'gemini' ? "bg-blue-500 border-blue-400 text-white" :
-                                  m.provider === 'openai' ? "bg-[#00a884] border-[#53dfa3] text-white" :
-                                  m.provider === 'anthropic' ? "bg-orange-500 border-orange-400 text-white" :
-                                  m.provider === 'groq' ? "bg-pink-500 border-pink-400 text-white" :
-                                  "bg-cyan-500 border-cyan-400 text-white"
-                                : "border-zinc-700 bg-zinc-950/40"
-                            )}>
-                              {active && <Check className="w-2.5 h-2.5 stroke-[4px]" />}
-                            </div>
-                            <span className={cn(
-                              "text-[11px] font-black truncate pr-4 text-zinc-50 transition-colors",
-                              active ? "text-zinc-50" : "text-zinc-400 group-hover:text-zinc-300"
-                            )}>{m.name}</span>
-                          </div>
-
-                          {/* Short description and key status row */}
-                          <div className="flex items-center justify-between mt-1.5 w-full border-t border-zinc-850/30 pt-1.5 font-sans">
-                            <span className={cn(
-                              "text-[8.5px] font-semibold block truncate max-w-[70%]",
-                              active ? "text-zinc-400" : "text-zinc-600 group-hover:text-zinc-500"
-                            )}>
-                              {m.desc?.split(',')[0] || m.provider}
-                            </span>
-                            
-                            {missingKey ? (
-                              <span className="text-[7.5px] bg-red-950/40 text-red-400 px-1 py-0.5 rounded border border-red-500/25 font-bold shrink-0 font-mono transition-all" title="Requires custom credential. Enter key in credential box.">
-                                ⚠ NO KEY
-                              </span>
-                            ) : (
-                              <span className={cn(
-                                "text-[7px] border rounded px-1 shrink-0 font-mono font-extrabold leading-none py-0.5 select-none tracking-tight",
-                                active 
-                                  ? "bg-emerald-500/10 border-emerald-500/35 text-[#00e676]" 
-                                  : "bg-zinc-950/40 border-zinc-900/60 text-zinc-600"
-                              )}>
-                                READY
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  
-                  {/* Informative fallback tip line */}
-                  <div className="mt-3 text-[9.5px] text-zinc-400 font-medium select-none bg-[#0b141a]/50 p-2.5 rounded-xl border border-zinc-900 flex items-start gap-2 leading-relaxed">
-                    <span className="text-amber-400 shrink-0 text-xs shadow-sm">💡</span>
-                    <span>
-                      <strong>Default Fallback:</strong> If you do not choose a specific goal or override any toggles, the system automatically defaults to general answering (using Gemini 3.5 Flash & GPT-4o Mini) to process any question you ask.
-                    </span>
-                  </div>
-                </div>
-              )}
-
             {/* Hidden file input */}
             <input 
               type="file" 
@@ -2642,27 +2551,27 @@ export const CompareChatView: React.FC = () => {
 
             {/* Selected media/file attachments list */}
             {attachments.length > 0 && (
-              <div className="max-w-5xl mx-auto mb-3 bg-[#1e2d35] border border-[#2c3d46]/70 p-3 rounded-2xl flex flex-wrap gap-2 animate-fade-in shadow-inner max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pointer-events-auto">
+              <div className="max-w-5xl mx-auto mb-3 bg-slate-50 border border-slate-200 p-3 rounded-2xl flex flex-wrap gap-2 animate-fade-in shadow-inner max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-250 pointer-events-auto">
                 {attachments.map((attach) => (
                   <div 
                     key={attach.id} 
-                    className="relative group flex items-center gap-2 bg-[#2a3942] border border-zinc-700/60 pl-2.5 pr-8 py-1.5 rounded-xl text-xs text-zinc-200 max-w-[200px] select-none hover:border-zinc-600 transition-colors"
+                    className="relative group flex items-center gap-2 bg-white border border-slate-200 pl-2.5 pr-8 py-1.5 rounded-xl text-xs text-slate-700 max-w-[200px] select-none hover:border-slate-350 transition-colors"
                   >
                     {attach.dataUrl ? (
                       <img 
                         src={attach.dataUrl} 
                         alt={attach.name} 
-                        className="w-6 h-6 object-cover rounded border border-zinc-800" 
+                        className="w-6 h-6 object-cover rounded border border-slate-200" 
                         referrerPolicy="no-referrer" 
                       />
                     ) : (
-                      <FileText className={cn("w-5 h-5 shrink-0", activeBot ? theme.text : "text-emerald-400")} />
+                      <FileText className={cn("w-5 h-5 shrink-0", activeBot ? theme.lightAccentText : "text-indigo-500")} />
                     )}
                     <span className="truncate pr-1 font-semibold">{attach.name}</span>
                     <button
                       type="button"
                       onClick={() => setAttachments(prev => prev.filter(a => a.id !== attach.id))}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer active:scale-95 outline-none"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all cursor-pointer active:scale-95 outline-none"
                       title="Remove attachment"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -2672,209 +2581,50 @@ export const CompareChatView: React.FC = () => {
               </div>
             )}
 
-            <div className="flex items-center gap-3 max-w-5xl mx-auto">
-              {/* WhatsApp Pillow Input bar */}
-              <div className="flex-1 flex items-center bg-[#202c33] rounded-full px-4 py-1 flex-row min-w-0">
+            <div className="flex items-end gap-3 max-w-5xl mx-auto">
+              {/* Upgraded Modern High-Contrast Input Bar */}
+              <div className="flex-1 flex items-end bg-white border border-slate-250 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500/20 rounded-2xl px-5 py-2.5 flex-row min-w-0 transition-all shadow-sm">
                 <button 
                   type="button" 
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-zinc-400 hover:text-white mr-3 active:scale-95 cursor-pointer shrink-0 outline-none" 
+                  className="text-slate-400 hover:text-slate-700 mr-3 mb-1 hover:scale-105 active:scale-95 cursor-pointer shrink-0 outline-none transition-transform" 
                   title="Attach media files (Drag & Drop also supported)"
                 >
                   <Paperclip className="w-4.5 h-4.5" />
                 </button>
-                <input
-                  type="text"
+                <textarea
+                  ref={textareaRef}
                   disabled={generating}
                   placeholder={isDragging ? "Drop your files here!" : "Type a message comparing multiple AI models..."}
                   value={inputMessage}
                   onChange={e => setInputMessage(e.target.value)}
-                  className="flex-1 bg-transparent py-3 text-sm text-zinc-100 outline-none placeholder-zinc-500 disabled:opacity-50 min-w-0"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e);
+                    }
+                  }}
+                  rows={1}
+                  className="flex-1 bg-transparent py-0.5 text-sm text-slate-800 outline-none placeholder-slate-450 disabled:opacity-50 min-w-0 font-medium resize-none overflow-y-auto"
                 />
               </div>
 
               {/* Instant Prompt Rephrase & AI Prompt Generator Hub */}
-              <div id="prompt-generator-wrapper" className="relative shrink-0">
+              <div id="prompt-generator-wrapper" className="relative shrink-0 flex items-center gap-2 mb-1">
                 <button
                   type="button"
-                  onClick={() => setIsPromptGeneratorOpen(!isPromptGeneratorOpen)}
+                  onClick={handleRephrasePrompt}
+                  disabled={isRephrasing}
                   className={cn(
-                    "w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-md shrink-0 border outline-none",
-                    isPromptGeneratorOpen 
-                      ? activeBot ? `${theme.text} bg-[#2c3d46] border-emerald-500` : "bg-[#005c4b]/40 border-[#00a884] text-[#00e676]" 
-                      : isRephrasing 
-                        ? "bg-amber-600/20 text-amber-400 border-amber-500/20 animate-pulse" 
-                        : "bg-[#202c33] border-zinc-800 hover:bg-[#2b3a42] text-amber-400 hover:text-amber-300 disabled:opacity-40 disabled:bg-zinc-900 disabled:text-zinc-650 disabled:border-transparent cursor-pointer"
+                    "w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-sm shrink-0 border outline-none",
+                    isRephrasing 
+                      ? "bg-amber-50/50 text-amber-600 border-amber-300 animate-pulse" 
+                      : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-amber-600 hover:text-amber-700 disabled:opacity-40 cursor-pointer"
                   )}
-                  title="Open AI Prompt Engineering & Optimizer Hub"
+                  title="Enhance prompt with AI"
                 >
                   <Sparkles className={cn("w-4.5 h-4.5", isRephrasing && "animate-spin")} />
                 </button>
-
-                {/* Animated AI Prompt Generator Panel */}
-                <AnimatePresence>
-                  {isPromptGeneratorOpen && (
-                    <>
-                      {/* Backdrop overlay to close click-outside */}
-                      <div 
-                        className="fixed inset-0 z-30 cursor-default" 
-                        onClick={() => setIsPromptGeneratorOpen(false)}
-                      />
-                      
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.92, y: 15 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.92, y: 15 }}
-                        transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                        className="absolute right-0 bottom-full mb-3.5 w-96 max-w-[calc(100vw-32px)] bg-[#1e2a30]/98 border border-[#2c3d46] hover:border-amber-500/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-5 z-40 text-white select-none overflow-hidden transition-all duration-300"
-                      >
-                        {/* 1. Futuristic Grid cybernetic overlay for AI animations */}
-                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-45" />
-                        
-                        {/* 2. Floating AI neural nodes inside cards */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-                          <motion.div 
-                            animate={{ scale: [1, 1.25, 1], opacity: [0.1, 0.25, 0.1] }}
-                            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                            className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-amber-500/10 blur-xl"
-                          />
-                          <motion.div 
-                            animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.2, 0.08], y: [-15, 15, -15] }}
-                            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut", delay: 1 }}
-                            className="absolute -bottom-10 left-5 w-36 h-36 rounded-full bg-emerald-500/10 blur-xl"
-                          />
-                        </div>
-
-                        {/* Sparkle scanning beam animation when rephrasing */}
-                        {isRephrasing && (
-                          <motion.div
-                            initial={{ y: "-100%" }}
-                            animate={{ y: "150%" }}
-                            transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                            className="absolute inset-x-0 h-10 bg-gradient-to-b from-transparent via-amber-500/10 to-transparent pointer-events-none"
-                          />
-                        )}
-
-                        {/* Top Accent Glowing Line */}
-                        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-emerald-500 via-amber-500 to-[#00a884] opacity-80" />
-
-                        {/* Panel Header */}
-                        <div className="flex items-center justify-between pb-3 border-b border-[#2c3d46]/70 relative z-10">
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <div className="p-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 shadow-sm shrink-0">
-                              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                            </div>
-                            <div>
-                              <h4 className="text-[11px] font-black text-zinc-100 uppercase tracking-widest flex items-center gap-1">
-                                AI Prompt Generator
-                              </h4>
-                              <p className="text-[9px] text-zinc-400 leading-none mt-0.5">Augment & engineer raw prompts</p>
-                            </div>
-                          </div>
-                          
-                          <button
-                            type="button"
-                            onClick={() => setIsPromptGeneratorOpen(false)}
-                            className="text-zinc-500 hover:text-zinc-300 p-1 rounded-lg hover:bg-zinc-800/40 transition-colors cursor-pointer"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-
-                        <div className="mt-4 space-y-4 relative z-10">
-                          {/* Part A: Style modifiers */}
-                          <div>
-                            <span className="text-[8.5px] uppercase font-black tracking-widest text-[#00e676] block mb-2">Enhancement Persona</span>
-                            <div className="grid grid-cols-2 gap-2">
-                              {[
-                                { style: 'standard', name: 'Refined LLM', emoji: '⚙️', desc: 'Default high-fidelity output' },
-                                { style: 'creative', name: 'Creative Spark', emoji: '🎨', desc: 'Adds vivid prose & depth' },
-                                { style: 'logical', name: 'Rigorous Logic', emoji: '🧠', desc: 'Step-by-step reasoning' },
-                                { style: 'speed', name: 'Executive Short', emoji: '⚡', desc: 'Ultra-concise, raw data' }
-                              ].map(item => (
-                                <button
-                                  key={item.style}
-                                  type="button"
-                                  onClick={() => setSelectedGeneratorStyle(item.style as any)}
-                                  className={cn(
-                                    "p-2.5 rounded-xl border text-left cursor-pointer transition-all duration-300 group/item active:scale-95",
-                                    selectedGeneratorStyle === item.style
-                                      ? "bg-[#005c4b]/20 border-[#00a884]/65 text-[#00ff88] shadow-sm font-extrabold"
-                                      : "bg-[#202c33]/45 border-[#2c3d46]/75 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500"
-                                  )}
-                                >
-                                  <div className="flex items-center gap-1 text-[10.5px] font-bold">
-                                    <span>{item.emoji}</span>
-                                    <span>{item.name}</span>
-                                  </div>
-                                  <div className="text-[8.5px] text-zinc-450 mt-0.5 line-clamp-1 group-hover/item:text-zinc-350">{item.desc}</div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Part B: Fast Prompt Archetype/Templates */}
-                          <div>
-                            <span className="text-[8.5px] uppercase font-black tracking-widest text-amber-400 block mb-2">Quick Craft Templates</span>
-                            <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-850">
-                              {PROMPT_TEMPLATES.map((tmpl, idx) => (
-                                <button
-                                  key={idx}
-                                  type="button"
-                                  onClick={() => {
-                                    const nextPrompt = tmpl.prompt + (inputMessage.trim() ? inputMessage.trim() : "[Explain quantum physics clearly]");
-                                    setInputMessage(nextPrompt);
-                                    toast.success(`Injected archetype template: "${tmpl.name}"`, { icon: tmpl.emoji });
-                                  }}
-                                  className="w-full text-left p-2 rounded-xl bg-[#202c33]/30 hover:bg-[#202c33]/80 border border-[#2c3d46]/45 hover:border-zinc-500 transition-all cursor-pointer group flex items-start gap-2.5"
-                                >
-                                  <span className="text-xs bg-[#2c3d46]/60 p-1 rounded group-hover:scale-110 duration-200 transition-transform shrink-0">{tmpl.emoji}</span>
-                                  <div className="min-w-0 flex-1">
-                                    <div className="text-[10px] font-extrabold text-zinc-200 group-hover:text-white transition-colors">{tmpl.name}</div>
-                                    <div className="text-[8.5px] text-zinc-450 truncate group-hover:text-zinc-350">{tmpl.desc}</div>
-                                  </div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Part C: Main action trigger button */}
-                          <div className="pt-3.5 border-t border-[#2c3d46]/50">
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                if (!inputMessage.trim()) {
-                                  toast.error("Please draft a quick draft prompt in the input bar first!", { id: "no-draft" });
-                                  return;
-                                }
-                                await handleGeneratorTrigger(selectedGeneratorStyle);
-                              }}
-                              disabled={isRephrasing}
-                              className={cn(
-                                "w-full py-2.5 rounded-xl uppercase text-[10px] font-black tracking-widest transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5",
-                                isRephrasing
-                                  ? "bg-amber-600/20 text-amber-300 border border-amber-500/25 animate-pulse cursor-wait"
-                                  : "bg-gradient-to-r from-amber-500 via-amber-600 to-[#00a884] hover:from-amber-400 hover:to-[#00c99e] text-white font-black shadow-lg"
-                              )}
-                            >
-                              {isRephrasing ? (
-                                <>
-                                  <span className="w-3.5 h-3.5 border-2 border-amber-400 border-t-transparent rounded-full animate-spin shrink-0" />
-                                  <span>Engineering AI Prompt...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-100" />
-                                  <span>Transform Prompt & Optimize</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
               </div>
               
               {/* Send button styled authentically as a circle */}
@@ -2882,17 +2632,17 @@ export const CompareChatView: React.FC = () => {
                 type="submit"
                 disabled={(!inputMessage.trim() && attachments.length === 0) || generating}
                 className={cn(
-                  "w-11 h-11 text-white rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0 active:scale-95 disabled:shadow-none relative z-10",
+                  "mb-1 w-11 h-11 text-white rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0 active:scale-95 disabled:shadow-none relative z-10",
                   activeBot 
-                    ? `${theme.bg} ${theme.hoverBg} disabled:bg-zinc-800 disabled:text-zinc-550` 
-                    : "bg-[#00a884] hover:bg-[#00c99e] disabled:bg-[#202c33] disabled:text-zinc-500"
+                    ? `${theme.bg} ${theme.hoverBg} disabled:bg-slate-100 disabled:text-slate-400` 
+                    : "bg-[#00a884] hover:bg-[#00c99e] disabled:bg-slate-100 disabled:text-slate-400"
                 )}
                 title={inputMessage.trim() || attachments.length > 0 ? "Send message to models" : "Microphone input (mocked)"}
               >
                 {inputMessage.trim() || attachments.length > 0 ? (
                   <Send className="w-4.5 h-4.5" />
                 ) : (
-                  <Mic className="w-4.5 h-4.5 text-zinc-400" />
+                  <Mic className="w-4.5 h-4.5 text-slate-400" />
                 )}
               </button>
             </div>
@@ -2900,18 +2650,33 @@ export const CompareChatView: React.FC = () => {
             {/* Auxiliary Info label */}
             <div className={cn(
               "flex items-center justify-between mt-2 max-w-5xl mx-auto px-4 text-[9px] uppercase tracking-wider font-extrabold select-none relative z-10",
-              activeBot ? theme.text : "text-[#00a884]"
+              activeBot ? theme.lightAccentText : "text-[#00a884]"
             )}>
               <span className="flex items-center gap-1">
-                <Sparkles className={cn("w-3 h-3", activeBot ? theme.text : "text-[#00e676]")} />
+                <Sparkles className={cn("w-3 h-3", activeBot ? theme.lightAccentText : "text-emerald-600")} />
                 <span>Broadcasting live to {selectedModelIds.length} model channels</span>
               </span>
-              <span className="text-zinc-650 font-mono tracking-widest uppercase">Enter to sendMessage</span>
+              <span className="text-slate-400 font-mono tracking-widest uppercase">Enter to sendMessage</span>
             </div>
           </form>
 
         </div>
       </div>
+
+      {/* Slide-out Prompt Optimizer Panel */}
+      <AnimatePresence>
+        {isPromptOptimizerOpen && (
+          <PromptOptimizer
+            initialPrompt={inputMessage}
+            onApplyPrompt={(optimizedText) => {
+              setInputMessage(optimizedText);
+              setIsPromptOptimizerOpen(false);
+              toast.success("Optimized prompt applied successfully to draft input field!");
+            }}
+            onClose={() => setIsPromptOptimizerOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -34,9 +34,10 @@ const AVAILABLE_MODELS: ModelInfo[] = [
 interface ComparisonBubbleProps {
   content: string;
   themeColor?: string;
+  onSelectWinner?: (updatedContent: string) => void;
 }
 
-const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor }) => {
+const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor, onSelectWinner }) => {
   let data: any;
   try {
     data = JSON.parse(content);
@@ -55,9 +56,16 @@ const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor
   return (
     <div className="w-full bg-zinc-950 border border-zinc-850 text-zinc-100 rounded-2xl overflow-hidden p-3.5 my-2 shadow-xl flex flex-col gap-3">
       {/* Header Info */}
-      <div className="flex items-center gap-1.5 border-b border-zinc-900 pb-2">
-        <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse shrink-0" />
-        <span className="text-[9px] uppercase tracking-wider font-extrabold text-zinc-400 font-mono">Concurrent Multi-Model Evaluation</span>
+      <div className="flex items-center justify-between border-b border-zinc-900 pb-2">
+        <div className="flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse shrink-0" />
+          <span className="text-[9px] uppercase tracking-wider font-extrabold text-zinc-400 font-mono">Concurrent Multi-Model Evaluation</span>
+        </div>
+        {data.chosenWinner && (
+          <span className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shrink-0 select-none">
+            🏆 best: {data.chosenWinner.provider}
+          </span>
+        )}
       </div>
 
       {/* Tabs */}
@@ -82,7 +90,7 @@ const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor
             type="button"
             onClick={() => setActiveTab(`${res.provider}-${res.modelId}`)}
             className={cn(
-              "px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wide transition-all cursor-pointer",
+              "px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wide transition-all cursor-pointer relative",
               activeTab === `${res.provider}-${res.modelId}`
                 ? "bg-zinc-100 text-zinc-950 shadow-sm"
                 : "bg-zinc-900 border border-zinc-850 text-zinc-455 hover:text-zinc-200"
@@ -92,6 +100,9 @@ const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor
              res.provider === 'openai' ? 'OpenAI 🟢' :
              res.provider === 'anthropic' ? 'Claude 🟠' :
              res.provider === 'groq' ? 'Groq 🟣' : 'DeepSeek 🔵'}
+            {data.chosenWinner?.provider === res.provider && data.chosenWinner?.modelId === res.modelId && (
+              <span className="absolute -top-1 -right-1 text-[8px] filter drop-shadow">⭐</span>
+            )}
           </button>
         ))}
       </div>
@@ -105,7 +116,7 @@ const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor
               <h4 className="text-xs font-bold text-indigo-200 capitalize flex items-center gap-1.5">
                 🌟 {evalData.winner?.provider} ({evalData.winner?.modelId})
               </h4>
-              <p className="text-zinc-300 mt-1 leading-relaxed text-[11px] font-medium">{evalData.winner?.reason}</p>
+              <p className="text-zinc-350 mt-1 leading-relaxed text-[11px] font-medium">{evalData.winner?.reason}</p>
             </div>
 
             {/* Comprehensive score comparison dashboard of accurate metrics */}
@@ -189,16 +200,55 @@ const ComparisonBubble: React.FC<ComparisonBubbleProps> = ({ content, themeColor
 
         {results.map((res: any, idx: number) => {
           if (activeTab !== `${res.provider}-${res.modelId}`) return null;
+          const isChosen = data.chosenWinner?.provider === res.provider && data.chosenWinner?.modelId === res.modelId;
+          
           return (
-            <div key={idx} className="space-y-2">
+            <div key={idx} className="space-y-3">
               <div className="flex items-center justify-between text-[9px] font-semibold text-zinc-500 pb-1.5 border-b border-zinc-900 font-mono">
                 <span className="uppercase tracking-wider">{res.provider} ({res.modelId?.slice(0, 15)})</span>
                 <span className="bg-zinc-900 px-1 py-0.5 rounded text-zinc-400">🕒 {(res.latency/1000).toFixed(2)}s | 📝 {res.wordCount} words</span>
               </div>
               {res.status === 'success' ? (
-                <div className="prose prose-invert prose-xs select-text text-zinc-300 leading-relaxed">
-                  <Markdown>{res.text}</Markdown>
-                </div>
+                <>
+                  <div className="prose prose-invert prose-xs select-text text-zinc-300 leading-relaxed">
+                    <Markdown>{res.text}</Markdown>
+                  </div>
+                  
+                  {onSelectWinner && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updatedData = {
+                          ...data,
+                          chosenWinner: {
+                            provider: res.provider,
+                            modelId: res.modelId
+                          }
+                        };
+                        onSelectWinner(JSON.stringify(updatedData));
+                        toast.success(`Chosen model outcome: marked ${res.provider} as preferred answer!`);
+                      }}
+                      className={cn(
+                        "mt-3 w-full py-2 rounded-xl border text-[10px] font-extrabold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none active:scale-[0.98] flex items-center justify-center gap-1.5",
+                        isChosen
+                          ? "bg-amber-500/15 border-amber-500/40 text-amber-300"
+                          : "bg-zinc-900 border-zinc-800 hover:bg-zinc-850/60 text-zinc-400 hover:text-zinc-200"
+                      )}
+                    >
+                      {isChosen ? (
+                        <>
+                          <span className="text-amber-400 font-extrabold">★</span>
+                          <span>Decided as Best Output</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-zinc-500">☆</span>
+                          <span>Choose as Best Output</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl flex items-start gap-1.5 text-[11px]">
                   <span className="font-bold">Error:</span>
@@ -249,6 +299,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ botId, inline, autoOpen 
   const [genPrompt, setGenPrompt] = useState('');
   const [genTitle, setGenTitle] = useState('');
   const [genLoading, setGenLoading] = useState(false);
+  const [isRephrasing, setIsRephrasing] = useState(false);
   const [localKeys, setLocalKeys] = useState({
     geminiKey: localStorage.getItem('compare_key_gemini') || '',
     openaiKey: localStorage.getItem('compare_key_openai') || '',
@@ -745,6 +796,40 @@ Make it rich, professional, and do NOT include any casual chatbot intro/outro te
     }
   };
 
+  const handleRephrasePrompt = async () => {
+    if (!input.trim()) {
+      toast.error("Please type a draft prompt first to optimize it.");
+      return;
+    }
+    
+    setIsRephrasing(true);
+    const toastId = toast.loading("Optimizing prompt with AI...");
+    try {
+      const response = await fetch('/api/rephrase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: input }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to rephrase prompt");
+      }
+      
+      const data = await response.json();
+      if (data.text) {
+        setInput(data.text.trim());
+        toast.success("Prompt optimized successfully!", { id: toastId });
+      } else {
+        throw new Error("No rephrased text returned");
+      }
+    } catch (error) {
+      console.error("Error rephrasing prompt:", error);
+      toast.error("Error optimizing prompt. Please try again.", { id: toastId });
+    } finally {
+      setIsRephrasing(false);
+    }
+  };
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!input.trim() && selectedFiles.length === 0) || !bot || loading) return;
@@ -993,6 +1078,17 @@ Make it rich, professional, and do NOT include any casual chatbot intro/outro te
                     ref={scrollRef}
                     className="flex-1 overflow-y-auto p-6 space-y-4 bg-zinc-50/50 scroll-smooth"
                   >
+                    {messages.length === 0 && (
+                      <div className="h-full flex flex-col items-center justify-center space-y-4 pb-12">
+                        <div className="w-16 h-16 rounded-3xl bg-white shadow-sm flex items-center justify-center">
+                          <MessageSquare className="w-8 h-8 text-indigo-400" />
+                        </div>
+                        <div className="text-center">
+                          <h3 className="text-slate-800 font-bold mb-1">Start chatting</h3>
+                          <p className="text-slate-500 text-sm">Send a message to begin the conversation with the AI.</p>
+                        </div>
+                      </div>
+                    )}
                     {messages.map((msg, i) => {
                       const isComparison = msg.role === 'assistant' && msg.content.startsWith('{"type":"comparison"');
                       return (
@@ -1005,14 +1101,22 @@ Make it rich, professional, and do NOT include any casual chatbot intro/outro te
                         >
                           {isComparison ? (
                             <div className="max-w-[95%] w-full">
-                              <ComparisonBubble content={msg.content} themeColor={bot.themeColor} />
+                              <ComparisonBubble 
+                                content={msg.content} 
+                                themeColor={bot?.themeColor} 
+                                onSelectWinner={async (updatedContent) => {
+                                  if (bot && session && msg.id) {
+                                    await dbService.updateMessage(bot.id, session.id, msg.id, { content: updatedContent });
+                                  }
+                                }}
+                              />
                             </div>
                           ) : (
                             <div className={cn(
-                              "max-w-[85%] p-4 rounded-2xl text-sm shadow-sm",
+                              "max-w-[85%] px-5 py-3.5 text-[14px] leading-relaxed shadow-sm break-words",
                               msg.role === 'user' 
-                                ? "bg-indigo-600 text-white rounded-tr-none" 
-                                : "bg-white text-zinc-800 border border-zinc-100 rounded-tl-none"
+                                ? "bg-zinc-800 text-white rounded-[20px] rounded-br-[6px]" 
+                                : "bg-white text-zinc-800 border border-slate-200/60 rounded-[20px] rounded-tl-[6px]"
                             )}>
                               {msg.attachments && msg.attachments.length > 0 && (
                                 <div className="flex flex-col gap-2.5 mb-3 w-full">
@@ -1377,9 +1481,23 @@ Make it rich, professional, and do NOT include any casual chatbot intro/outro te
                           value={input}
                           onChange={e => setInput(e.target.value)}
                           placeholder="Type your message..."
-                          className="w-full bg-zinc-100/90 hover:bg-zinc-100 border-0 rounded-full pl-5 pr-11 py-2.5 sm:py-3 text-[12px] sm:text-sm text-zinc-800 placeholder:text-zinc-500 placeholder:text-[11px] sm:placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all h-[40px] sm:h-[44px] shadow-inner"
+                          className="w-full bg-zinc-100/90 hover:bg-zinc-100 border-0 rounded-full pl-5 pr-20 py-2.5 sm:py-3 text-[12px] sm:text-sm text-zinc-800 placeholder:text-zinc-500 placeholder:text-[11px] sm:placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all h-[40px] sm:h-[44px] shadow-inner"
                         />
-                        <div className="absolute right-2.5 sm:right-3.5 top-1/2 -translate-y-1/2 flex items-center">
+                        <div className="absolute right-2.5 sm:right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+                          {input.trim() && (
+                            <button
+                              type="button"
+                              onClick={handleRephrasePrompt}
+                              disabled={isRephrasing}
+                              className={cn(
+                                "p-1.5 rounded-full transition-all duration-200 text-amber-500 hover:bg-amber-100/50",
+                                isRephrasing && "animate-pulse opacity-50 cursor-wait"
+                              )}
+                              title="Enhance prompt with AI"
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={toggleListening}

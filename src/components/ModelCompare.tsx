@@ -78,6 +78,31 @@ export const ModelCompare: React.FC<ModelCompareProps> = ({ bot }) => {
   });
 
   const [isKeysConfigOpen, setIsKeysConfigOpen] = useState(false);
+
+  const [serverKeysStatus, setServerKeysStatus] = useState<Record<string, boolean>>({
+    geminiKey: false,
+    openaiKey: false,
+    anthropicKey: false,
+    groqKey: false,
+    deepseekKey: false,
+  });
+
+  useEffect(() => {
+    fetch('/api/keys-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setServerKeysStatus({
+            geminiKey: !!data.geminiKey,
+            openaiKey: !!data.openaiKey,
+            anthropicKey: !!data.anthropicKey,
+            groqKey: !!data.groqKey,
+            deepseekKey: !!data.deepseekKey,
+          });
+        }
+      })
+      .catch(err => console.warn('Failed to fetch server credentials status:', err));
+  }, []);
   const [selectedModelIds, setSelectedModelIds] = useState<string[]>(
     AVAILABLE_MODELS.filter(m => m.defaultEnabled).map(m => m.id)
   );
@@ -273,7 +298,7 @@ export const ModelCompare: React.FC<ModelCompareProps> = ({ bot }) => {
       return;
     }
 
-    const missingKeys = AVAILABLE_MODELS.filter(m => selectedModelIds.includes(m.id) && m.requiresKey && !keys[m.keyName]);
+    const missingKeys = AVAILABLE_MODELS.filter(m => selectedModelIds.includes(m.id) && m.requiresKey && !keys[m.keyName] && !serverKeysStatus[m.keyName]);
     if (missingKeys.length > 0) {
       toast.error(`Please provide API keys for: ${missingKeys.map(m => m.name).join(', ')}`);
       setIsKeysConfigOpen(true);
@@ -484,7 +509,7 @@ export const ModelCompare: React.FC<ModelCompareProps> = ({ bot }) => {
     }
 
     // Check if selected models have keys
-    const missingKeys = AVAILABLE_MODELS.filter(m => selectedModelIds.includes(m.id) && m.requiresKey && !keys[m.keyName]);
+    const missingKeys = AVAILABLE_MODELS.filter(m => selectedModelIds.includes(m.id) && m.requiresKey && !keys[m.keyName] && !serverKeysStatus[m.keyName]);
     if (missingKeys.length > 0) {
       toast.error(`Please provide API keys for: ${missingKeys.map(m => m.name).join(', ')}`);
       setIsKeysConfigOpen(true);
@@ -711,7 +736,7 @@ export const ModelCompare: React.FC<ModelCompareProps> = ({ bot }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {AVAILABLE_MODELS.map(model => {
             const isSelected = selectedModelIds.includes(model.id);
-            const hasKey = !model.requiresKey || !!keys[model.keyName];
+            const hasKey = !model.requiresKey || !!keys[model.keyName] || !!serverKeysStatus[model.keyName];
             return (
               <button
                 type="button"
@@ -745,6 +770,10 @@ export const ModelCompare: React.FC<ModelCompareProps> = ({ bot }) => {
                   {model.requiresKey && !hasKey ? (
                     <span className="flex items-center gap-1 text-[9px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20 uppercase tracking-wide">
                       <Key className="w-3 h-3" /> Key Needed
+                    </span>
+                  ) : model.requiresKey && serverKeysStatus[model.keyName] && !keys[model.keyName] ? (
+                    <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/25 uppercase tracking-wide animate-pulse">
+                      ⚡ Server Active
                     </span>
                   ) : isSelected ? (
                     <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />

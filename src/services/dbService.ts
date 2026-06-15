@@ -229,6 +229,7 @@ export const dbService = {
     try {
       const msgRef = doc(collection(db, path));
       const msg: ChatMessage = cleanObject({
+        id: msgRef.id,
         sessionId,
         role: role as any,
         content,
@@ -241,6 +242,14 @@ export const dbService = {
       handleFirestoreError(error, OperationType.WRITE, path);
     }
   },
+  async updateMessage(botId: string, sessionId: string, messageId: string, updates: Partial<ChatMessage>) {
+    const path = `bots/${botId}/sessions/${sessionId}/messages/${messageId}`;
+    try {
+      await updateDoc(doc(db, `bots/${botId}/sessions/${sessionId}/messages`, messageId), cleanObject(updates));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, path);
+    }
+  },
   async getMessages(botId: string, sessionId: string, limitCount = 20) {
     const path = `bots/${botId}/sessions/${sessionId}/messages`;
     try {
@@ -250,7 +259,7 @@ export const dbService = {
         limit(limitCount)
       );
       const snap = await getDocs(q);
-      return snap.docs.map(d => d.data() as ChatMessage);
+      return snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage));
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, path);
     }
@@ -262,7 +271,7 @@ export const dbService = {
       orderBy('timestamp', 'asc')
     );
     return onSnapshot(q, (snap) => {
-      callback(snap.docs.map(d => d.data() as ChatMessage));
+      callback(snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, path);
     });
@@ -284,7 +293,7 @@ export const dbService = {
     try {
       const q = query(collection(db, path), orderBy('timestamp', 'asc'));
       const snap = await getDocs(q);
-      return snap.docs.map(d => d.data() as ChatMessage);
+      return snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage));
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, path);
     }

@@ -12,6 +12,8 @@ import {
   ExternalLink,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
+  ChevronUp,
   Globe,
   Send,
   MessageCircle,
@@ -25,7 +27,8 @@ import {
   Eye,
   EyeOff,
   Sparkles,
-  ShieldAlert
+  ShieldAlert,
+  Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { dbService } from './services/dbService';
@@ -39,8 +42,10 @@ import { ChatWidget } from './components/ChatWidget';
 import { ModelCompare } from './components/ModelCompare';
 import { CompareChatView } from './components/CompareChatView';
 import { ModelAndPurposeConfig } from './components/ModelAndPurposeConfig';
-import { RedTeamingSandbox } from './components/RedTeamingSandbox';
+import { DiagnosticHub } from './components/DiagnosticHub';
 import { KnowledgeGraph } from './components/KnowledgeGraph';
+import { InteractiveBot } from './components/InteractiveBot';
+import { PostLoginLoader } from './components/PostLoginLoader';
 
 // Components
 const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) => {
@@ -50,7 +55,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
   const tabs = [
     { id: 'bots', label: 'My Bots', icon: BotIcon },
     { id: 'chat', label: 'Chat', icon: MessageSquare },
-    { id: 'redteam', label: 'Red Team', icon: ShieldAlert },
+    { id: 'redteam', label: 'Diagnostics', icon: Activity },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -65,7 +70,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
       )}>
         <div 
           className={cn(
-            "flex items-center gap-2.5 text-white font-bold text-xl cursor-pointer transition-all duration-200 shrink-0",
+            "flex items-center gap-2.5 text-zinc-100 font-bold text-xl cursor-pointer transition-all duration-200 shrink-0",
             isCollapsed && "justify-center"
           )} 
           onClick={() => setActiveTab('bots')}
@@ -73,12 +78,12 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(79,70,229,0.3)]">
             <Zap className="w-4.5 h-4.5" />
           </div>
-          {!isCollapsed && <span className="animate-fade-in tracking-tight font-extrabold text-white">BotAI</span>}
+          {!isCollapsed && <span className="animate-fade-in tracking-tight font-extrabold text-zinc-100">BotAI</span>}
         </div>
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={cn(
-            "p-1.5 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-all shadow-sm shrink-0 cursor-pointer",
+            "p-1.5 rounded-xl border border-zinc-800 bg-zinc-950 hover:bg-zinc-850 hover:border-indigo-300/40 text-zinc-600 hover:text-indigo-600 transition-all duration-300 shadow-sm shrink-0 cursor-pointer active:scale-95",
             isCollapsed && "mt-1.5"
           )}
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
@@ -94,42 +99,42 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
             onClick={() => setActiveTab(tab.id)}
             title={isCollapsed ? tab.label : undefined}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 border border-transparent cursor-pointer",
+              "group w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 border border-transparent cursor-pointer font-bold active:scale-[0.98]",
               isCollapsed ? "justify-center px-1" : "",
               activeTab === tab.id 
-                ? "bg-indigo-600/10 text-indigo-400 border-indigo-600/20 shadow-sm" 
-                : "text-zinc-400 hover:text-white hover:bg-zinc-900/60"
+                ? "bg-indigo-600/10 text-indigo-400 border-indigo-600/20 shadow-sm font-extrabold" 
+                : "text-zinc-600 hover:text-indigo-600 hover:bg-zinc-850/80 hover:border-zinc-800/50"
             )}
           >
-            <tab.icon className="w-5 h-5 shrink-0" />
-            {!isCollapsed && <span className="font-semibold text-sm whitespace-nowrap">{tab.label}</span>}
+            <tab.icon className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-105" />
+            {!isCollapsed && <span className="text-sm whitespace-nowrap">{tab.label}</span>}
           </button>
         ))}
       </nav>
 
-      <div className={cn("p-4 border-t border-zinc-900/40", isCollapsed && "px-2")}>
+      <div className={cn("p-4 border-t border-zinc-800/60", isCollapsed && "px-2")}>
         <div className={cn(
-          "flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-900/20 border border-zinc-900/40",
+          "flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-zinc-850/50 border border-zinc-800/40",
           isCollapsed && "flex-col items-center gap-4 px-0 py-2 bg-transparent border-none"
         )}>
           <div 
-            className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0"
+            className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center text-xs font-extrabold text-[#4338ca] shrink-0 border border-indigo-600/15"
             title={isCollapsed ? user?.email : undefined}
           >
             {user?.email?.[0]?.toUpperCase() || 'U'}
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user?.email}</p>
-              <p className="text-xs text-zinc-500 uppercase tracking-wider">{user?.plan} Plan</p>
+              <p className="text-sm font-bold text-zinc-300 truncate">{user?.email}</p>
+              <p className="text-[10px] font-extrabold text-indigo-600/90 tracking-widest uppercase">{user?.plan} Plan</p>
             </div>
           )}
           <button 
             onClick={() => signOut(auth)}
             title={isCollapsed ? "Sign Out" : undefined}
             className={cn(
-              "text-zinc-500 hover:text-red-400 transition-colors shrink-0",
-              isCollapsed && "p-2 hover:bg-zinc-900/50 rounded-xl"
+              "text-zinc-650 hover:text-red-500 transition-colors shrink-0 p-1.5 hover:bg-zinc-850/80 rounded-xl",
+              isCollapsed && "p-2 hover:bg-zinc-850 rounded-xl"
             )}
           >
             <LogOut className="w-4 h-4" />
@@ -155,7 +160,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, botName }: { isOpen: b
               <Trash2 className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Delete Bot</h3>
+              <h3 className="text-lg font-bold text-zinc-100">Delete Bot</h3>
               <p className="text-sm text-zinc-400 mt-1">
                 Are you sure you want to delete <strong className="text-zinc-200">{botName}</strong> permanently? This action cannot be undone and all data will be lost.
               </p>
@@ -166,14 +171,14 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, botName }: { isOpen: b
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-sm font-semibold rounded-xl transition-all cursor-pointer"
+              className="px-5 py-2.5 bg-zinc-850 hover:bg-zinc-800 border border-zinc-750 hover:border-zinc-650 text-zinc-350 hover:text-zinc-200 text-sm font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow active:scale-[0.98] cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={onConfirm}
-              className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-red-600/10 cursor-pointer"
+              className="px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white text-sm font-bold rounded-2xl transition-all duration-300 shadow-md shadow-red-500/10 hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] cursor-pointer border border-transparent"
             >
               Confirm Delete
             </button>
@@ -311,8 +316,6 @@ const BotCard = ({ bot, onEdit, onDelete }: { bot: Bot, onEdit: (b: Bot) => void
 
   const status = getBotStatus(bot);
   const theme = getThemeColorConfig(bot.themeColor);
-  const themeBorderColorClass = theme.text.replace('text-', 'border-');
-  const themeBgColorClass = theme.text.replace('text-', 'bg-');
 
   return (
     <motion.div 
@@ -320,172 +323,126 @@ const BotCard = ({ bot, onEdit, onDelete }: { bot: Bot, onEdit: (b: Bot) => void
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative overflow-hidden rounded-3xl p-6.5 flex flex-col justify-between h-full transition-all duration-500",
-        "bg-[#0e0e11]/60 backdrop-blur-xl border border-zinc-900/90 hover:bg-[#131317]/85",
-        theme.border,
-        "shadow-[0_12px_40px_rgba(0,0,0,0.45)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:-translate-y-1.5 group"
+        "group relative flex flex-col justify-between h-full rounded-2xl p-6 transition-all duration-300",
+        "bg-zinc-900/30 hover:bg-zinc-900/50 border border-zinc-800/60 hover:border-zinc-700/60",
+        "shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-1 overflow-hidden"
       )}
     >
-      {/* 1. Dynamic Ambient Blur Spot derived from bot theme color */}
+      {/* Soft, beautiful radial brand glow in the background that lights up on hover */}
       <div className={cn(
-        "absolute -right-20 -top-20 w-44 h-44 rounded-full filter blur-3xl opacity-[0.02] group-hover:opacity-[0.16] transition-all duration-700 pointer-events-none",
+        "absolute -right-20 -top-20 w-44 h-44 rounded-full filter blur-[50px] opacity-0 group-hover:opacity-[0.08] transition-opacity duration-500 pointer-events-none z-0",
         theme.glow
       )} />
-      
-      {/* 2. Floating Synaptic Neural Nodes Background Animation */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 group-hover:opacity-85 transition-opacity duration-500">
-        <motion.span
-          animate={{ opacity: [0.1, 0.45, 0.1], y: [-4, 4, -4] }}
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-          className={cn("absolute top-1/4 left-1/4 w-1 h-1 rounded-full filter blur-[0.5px]", themeBgColorClass)}
-        />
-        <motion.span
-          animate={{ opacity: [0.15, 0.55, 0.15], y: [4, -4, 4] }}
-          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-1/3 right-1/3 w-1.2 h-1.2 bg-zinc-600 rounded-full filter blur-[0.5px]"
-        />
-        <motion.span
-          animate={{ opacity: [0.08, 0.35, 0.08], scale: [0.95, 1.15, 0.95] }}
-          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut", delay: 2.2 }}
-          className="absolute top-2/3 left-14 w-1.5 h-1.5 bg-emerald-500/60 rounded-full"
-        />
-      </div>
 
-      {/* 3. Quantum Cybernetic Linear Light Scan Wave */}
-      <motion.div
-        initial={{ y: "-100%" }}
-        animate={{ y: "240%" }}
-        transition={{ repeat: Infinity, duration: 4.5, ease: "linear" }}
-        className={cn(
-          "absolute inset-x-0 h-[45px] bg-gradient-to-b from-transparent via-indigo-500/[0.035] to-transparent pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity",
-          theme.lightGlow.replace('/10', '/5')
-        )}
-      />
+      <div className="relative z-10 flex flex-col h-full justify-between gap-5">
+        <div>
+          {/* Header row: Avatar (left), Badges (right) */}
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="relative shrink-0">
+              <div className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden shadow-md border border-white/5 transition-all duration-300 select-none",
+                bot.profileImage ? "bg-zinc-800" : (theme.bg || "bg-indigo-600")
+              )}>
+                {bot.profileImage ? (
+                  <img 
+                    src={bot.profileImage} 
+                    alt={bot.name} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <BotIcon className="w-5.5 h-5.5 text-white transition-transform duration-300 group-hover:scale-105" />
+                )}
+              </div>
+            </div>
 
-      {/* Highlight Top Edge Shine */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none group-hover:via-white/10 transition-all duration-500" />
+            <div className="flex items-center gap-2">
+              <span className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border font-mono backdrop-blur-md shadow-sm",
+                status.className
+              )}>
+                <span className={cn("w-1.5 h-1.5 rounded-full", status.dotClassName)} />
+                {status.label}
+              </span>
+              <div className="flex items-center gap-1.5 bg-zinc-950/40 border border-zinc-800/60 px-2.5 py-1 rounded-lg shrink-0 shadow-inner" title="Channel integrations support">
+                <MessageCircle className={cn("w-4 h-4 transition-colors duration-300", bot.whatsappEnabled ? "text-emerald-400" : "text-zinc-650")} />
+                <Send className={cn("w-4 h-4 transition-colors duration-300", bot.telegramEnabled ? "text-sky-400" : "text-zinc-650")} />
+              </div>
+            </div>
+          </div>
 
-      <div className="flex justify-between items-start mb-6 relative z-10">
-        {/* 4. Agent profile icon with dynamic rotational cybernetic aura and breathing neon ring */}
-        <div className="relative group/avatar shrink-0">
-          {/* External Revolving Cybernetic Halo */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-            className={cn(
-              "absolute -inset-1.5 rounded-[20px] border border-dashed opacity-25 group-hover/avatar:scale-105 group-hover:opacity-65 transition-all duration-500",
-              themeBorderColorClass
+          {/* Name & Context info */}
+          <div className="space-y-1.5">
+            <h3 className={cn(
+              "text-lg font-bold text-zinc-100 tracking-tight leading-snug transition-colors duration-300",
+              theme.hoverText
+            )}>
+              {bot.name}
+            </h3>
+            <p className="text-zinc-400 text-xs font-normal line-clamp-2 leading-relaxed min-h-[36px]">
+              {bot.context || "No description provided."}
+            </p>
+          </div>
+
+          {/* Capabilities Badges */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-3 mt-4 border-t border-zinc-850/50">
+            <span className={cn(
+              "px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border font-mono select-none",
+              bot.thinkingLevel === 'HIGH' 
+                ? "bg-purple-500/10 text-purple-400 border-purple-500/15" 
+                : bot.thinkingLevel === 'MEDIUM' 
+                  ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/15" 
+                  : "bg-zinc-800/50 text-zinc-400 border-zinc-800/80"
+            )}>
+              {bot.thinkingLevel || 'LOW'} Reasoning
+            </span>
+            
+            {bot.googleSearchEnabled && (
+              <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider bg-sky-500/10 text-sky-400 border border-sky-500/15 font-mono inline-flex items-center gap-1 shadow-sm select-none">
+                <Globe className="w-2.5 h-2.5 animate-spin" style={{ animationDuration: '10s' }} />
+                Live Web
+              </span>
             )}
-          />
-          {/* Inner Breathing High-energy glow */}
-          <motion.div
-            animate={{ scale: [1, 1.05, 1], opacity: [0.15, 0.35, 0.15] }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-            className={cn(
-              "absolute -inset-1 rounded-2xl blur-[1.5px] pointer-events-none group-hover/avatar:scale-110 group-hover:opacity-55 transition-all duration-500",
-              bot.themeColor || "bg-indigo-600"
-            )}
-          />
 
-          <div className={cn(
-            "w-15 h-15 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 shadow-xl border border-white/5 transition-all duration-500 group-hover:scale-[1.03] select-none relative z-10",
-            !bot.profileImage && (bot.themeColor || "bg-indigo-600")
-          )}>
-            {bot.profileImage ? (
-              <img 
-                src={bot.profileImage} 
-                alt={bot.name} 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <BotIcon className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-500" />
+            {bot.documentSupportEnabled && (
+              <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-550/15 font-mono inline-flex items-center gap-1 shadow-sm select-none">
+                Knowledge Base
+              </span>
             )}
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <span className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-wider border font-mono backdrop-blur-md shadow-sm",
-            status.className
-          )}>
-            <span className={cn("w-1.5 h-1.5 rounded-full", status.dotClassName)} />
-            {status.label}
-          </span>
-          <div className="flex items-center gap-1.5 bg-zinc-950/40 border border-zinc-800/80 px-3 py-1.5 rounded-xl shrink-0 shadow-inner relative" title="Channel integrations support">
-            <MessageCircle className={cn("w-4 h-4 transition-colors duration-300", bot.whatsappEnabled ? "text-emerald-400" : "text-zinc-600")} />
-            <Send className={cn("w-4 h-4 transition-colors duration-300", bot.telegramEnabled ? "text-sky-400" : "text-zinc-600")} />
-          </div>
-        </div>
-      </div>
-      
-      <div className="my-5 relative z-10">
-        <h3 className={cn(
-          "text-xl font-bold text-white mb-2 leading-snug tracking-tight transition-colors duration-300",
-          theme.hoverText
-        )}>
-          {bot.name}
-        </h3>
-        <p className="text-zinc-405 text-sm line-clamp-2 font-normal leading-relaxed mb-4 min-h-[40px]">
-          {bot.context || "No description provided."}
-        </p>
 
-        {/* Dynamic Engine Characteristics details */}
-        <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-zinc-900/40">
-          <span className={cn(
-            "px-2.5 py-1 rounded-xl text-[9px] font-extrabold uppercase tracking-widest border font-mono select-none",
-            bot.thinkingLevel === 'HIGH' 
-              ? "bg-purple-500/10 text-purple-400 border-purple-500/15" 
-              : bot.thinkingLevel === 'MEDIUM' 
-                ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/15" 
-                : "bg-zinc-800/55 text-zinc-400 border-zinc-800/80"
-          )}>
-            {bot.thinkingLevel || 'LOW'} Reasoning
-          </span>
-          
-          {bot.googleSearchEnabled && (
-            <span className="px-2.5 py-1 rounded-xl text-[9px] font-extrabold uppercase tracking-widest bg-sky-500/10 text-sky-400 border border-sky-500/15 font-mono flex items-center gap-1 shadow-sm select-none">
-              <Globe className="w-2.5 h-2.5 animate-spin" style={{ animationDuration: '10s' }} />
-              Live Web
-            </span>
-          )}
-
-          {bot.documentSupportEnabled && (
-            <span className="px-2.5 py-1 rounded-xl text-[9px] font-extrabold uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-550/15 font-mono flex items-center gap-1 shadow-sm select-none">
-              Knowledge Base
-            </span>
-          )}
-        </div>
-      </div>
-      
-      <div className="flex items-center justify-between pt-4 border-t border-zinc-900/50 mt-auto relative z-10">
-        <button 
-          onClick={() => onEdit(bot)}
-          className={cn(
-            "text-sm font-semibold flex items-center gap-1.5 cursor-pointer group/btn transition-colors duration-300",
-            theme.text,
-            "brightness-105 hover:brightness-125"
-          )}
-        >
-          Manage Agent <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-        </button>
-        <div className="flex items-center gap-3">
+        {/* Footer controls */}
+        <div className="flex items-center justify-between pt-4 border-t border-zinc-850/50 mt-auto">
           <button 
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(bot.id, bot.name);
-            }}
-            className="text-zinc-500 hover:text-red-400 p-2 rounded-xl hover:bg-red-500/10 transition-all cursor-pointer hover:scale-105"
-            title="Delete Bot"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-          <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-mono font-medium text-right flex flex-col gap-0.5 leading-tight select-none">
-            <div>Created: {formatBotDate(bot.createdAt)}</div>
-            {bot.updatedAt && formatBotDate(bot.createdAt) !== formatBotDate(bot.updatedAt) && (
-              <div className={cn("font-bold animate-pulse", theme.text)}>Updated: {formatBotDate(bot.updatedAt)}</div>
+            onClick={() => onEdit(bot)}
+            className={cn(
+              "text-sm font-semibold flex items-center gap-1.5 cursor-pointer group/btn transition-colors duration-300",
+              theme.text,
+              "brightness-105 hover:brightness-125 hover:translate-x-0.5"
             )}
+          >
+            Manage Agent <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(bot.id, bot.name);
+              }}
+              className="text-zinc-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-all cursor-pointer hover:scale-105"
+              title="Delete Bot"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+            <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-mono font-medium text-right flex flex-col gap-0.5 leading-none select-none">
+              <div>Created: {formatBotDate(bot.createdAt)}</div>
+              {bot.updatedAt && formatBotDate(bot.createdAt) !== formatBotDate(bot.updatedAt) && (
+                <div className={cn("font-bold animate-pulse", theme.text)}>Updated: {formatBotDate(bot.updatedAt)}</div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -549,10 +506,10 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
       >
         <div className="p-8 border-b border-zinc-800">
           <h2 className="text-2xl font-bold text-white">Create New AI Bot</h2>
-          <p className="text-zinc-500 mt-1">Configure your bot's personality and intelligence.</p>
+          <p className="text-zinc-400 mt-1">Configure your bot's personality and intelligence.</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="px-8 pt-8 pb-0 space-y-6 max-h-[70vh] overflow-y-auto">
           {/* Bot Profile Image Upload */}
           <div className="flex items-center gap-6 p-4 bg-zinc-950 border border-zinc-800 rounded-2xl">
             <div className="relative">
@@ -564,8 +521,8 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className={cn("w-20 h-20 rounded-2xl flex items-center justify-center border border-zinc-800 bg-zinc-900 text-zinc-500")}>
-                  <BotIcon className="w-8 h-8 text-white/50" />
+                <div className={cn("w-20 h-20 rounded-2xl flex items-center justify-center border border-zinc-800 bg-zinc-900 text-zinc-400")}>
+                  <BotIcon className="w-8 h-8 text-white/70" />
                 </div>
               )}
               {formData.profileImage && (
@@ -580,7 +537,7 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
             </div>
             <div className="space-y-1 flex-1">
               <p className="text-sm font-bold text-white">Bot Profile Image</p>
-              <p className="text-xs text-zinc-500">Upload a square image as the chatbot avatar.</p>
+              <p className="text-xs text-zinc-400">Upload a square image as the chatbot avatar.</p>
               <input
                 type="file"
                 accept="image/*"
@@ -608,62 +565,63 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Bot Name</label>
+              <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Bot Name</label>
               <input 
                 required
                 value={formData.name}
                 onChange={e => setFormData({...formData, name: e.target.value})}
                 placeholder="e.g. Sales Assistant"
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all"
+                className="w-full modern-input rounded-xl px-4 py-3 outline-none transition-all"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Tone / Personality</label>
+              <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Tone / Personality</label>
               <select 
                 value={formData.tone}
                 onChange={e => setFormData({...formData, tone: e.target.value})}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all"
+                className="w-full modern-input rounded-xl px-4 py-3 outline-none transition-all"
               >
-                <option>Friendly & Professional</option>
-                <option>Sarcastic & Funny</option>
-                <option>Strict & Formal</option>
-                <option>Empathetic Support</option>
+                <option className="bg-white text-zinc-900">Friendly & Professional</option>
+                <option className="bg-white text-zinc-900">Sarcastic & Funny</option>
+                <option className="bg-white text-zinc-900">Strict & Formal</option>
+                <option className="bg-white text-zinc-900">Empathetic Support</option>
               </select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Welcome Message</label>
+            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Welcome Message</label>
             <input 
               required
               value={formData.welcomeMessage}
               onChange={e => setFormData({...formData, welcomeMessage: e.target.value})}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all"
+              placeholder="e.g. Hello! How can I help you today?"
+              className="w-full modern-input rounded-xl px-4 py-3 outline-none transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">System Instructions / Base Context</label>
+            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">System Instructions / Base Context</label>
             <textarea 
               required
               value={formData.context}
               onChange={e => setFormData({...formData, context: e.target.value})}
               placeholder="Describe your bot's core identity and instructions..."
               rows={3}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all resize-none"
+              className="w-full modern-input rounded-xl px-4 py-3 outline-none transition-all resize-none"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Knowledge Base (RAG)</label>
+            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Knowledge Base (RAG)</label>
             <textarea 
               value={formData.knowledgeBase}
               onChange={e => setFormData({...formData, knowledgeBase: e.target.value})}
               placeholder="Paste large amounts of text, documentation, or FAQs here. We'll chunk and index it for efficient retrieval."
               rows={6}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all resize-none"
+              className="w-full modern-input rounded-xl px-4 py-3 outline-none transition-all resize-none"
             />
-            <p className="text-[10px] text-zinc-600 mt-1 uppercase tracking-widest">Supports thousands of words. Automatically chunked and indexed.</p>
+            <p className="text-[10px] text-zinc-450 mt-1 uppercase tracking-widest">Supports thousands of words. Automatically chunked and indexed.</p>
           </div>
 
           <div className="pt-4 border-t border-zinc-800 space-y-4">
@@ -672,7 +630,7 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
             <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800 rounded-2xl">
               <div>
                 <p className="text-sm font-bold text-white">Google Search Grounding</p>
-                <p className="text-xs text-zinc-500">Allow bot to search the web for real-time info.</p>
+                <p className="text-xs text-zinc-400">Allow bot to search the web for real-time info.</p>
               </div>
               <input 
                 type="checkbox"
@@ -685,23 +643,23 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
             <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800 rounded-2xl">
               <div>
                 <p className="text-sm font-bold text-white">Thinking Level</p>
-                <p className="text-xs text-zinc-500">Higher levels improve reasoning but increase latency.</p>
+                <p className="text-xs text-zinc-400">Higher levels improve reasoning but increase latency.</p>
               </div>
               <select 
                 value={formData.thinkingLevel}
                 onChange={e => setFormData({...formData, thinkingLevel: e.target.value as any})}
                 className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1 text-sm text-white outline-none"
               >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
+                <option value="LOW" className="bg-zinc-900 text-white">Low</option>
+                <option value="MEDIUM" className="bg-zinc-900 text-white">Medium</option>
+                <option value="HIGH" className="bg-zinc-900 text-white">High</option>
               </select>
             </div>
 
             <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800 rounded-2xl">
               <div>
                 <p className="text-sm font-bold text-white">Document Analysis</p>
-                <p className="text-xs text-zinc-500">Allow bot to read PDFs and text files.</p>
+                <p className="text-xs text-zinc-400">Allow bot to read PDFs and text files.</p>
               </div>
               <input 
                 type="checkbox"
@@ -714,7 +672,7 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
             <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800 rounded-2xl">
               <div>
                 <p className="text-sm font-bold text-white">Image Support</p>
-                <p className="text-xs text-zinc-500">Allow bot to see and process images.</p>
+                <p className="text-xs text-zinc-400">Allow bot to see and process images.</p>
               </div>
               <input 
                 type="checkbox"
@@ -725,7 +683,7 @@ const CreateBotModal = ({ isOpen, onClose, onCreated }: { isOpen: boolean, onClo
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 pt-4 sticky bottom-0 bg-zinc-900 py-4">
+          <div className="flex justify-end gap-4 pt-4 pb-8 sticky bottom-0 bg-zinc-900 z-10 rounded-b-3xl">
             <button 
               type="button"
               onClick={onClose}
@@ -752,9 +710,11 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
   const { user, fetchBots } = useAppStore();
   const [bot, setBot] = useState<Bot>(initialBot);
   const [activeTab, setActiveTab] = useState('config');
+  const [isAdvancedConfigOpen, setIsAdvancedConfigOpen] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(false);
   const [indexing, setIndexing] = useState(false);
+  const [testingTelegram, setTestingTelegram] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editData, setEditData] = useState({
@@ -796,6 +756,32 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
     }
   }, [activeTab, bot.id]);
 
+  const handleSetupTelegramWebhook = async () => {
+    if (!editData.telegramToken) {
+      toast.error("Please enter a Telegram Bot Token first");
+      return;
+    }
+    setTestingTelegram(true);
+    try {
+      const res = await fetch(`/api/bots/${bot.id}/setup-telegram`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: window.location.origin })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success('Successfully connected with Telegram! Webhook active.');
+      } else {
+        toast.error(`Telegram Connection Error: ${data.details || data.error || 'Please verify your Bot Token'}`);
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Network error registering Telegram Webhook.');
+    } finally {
+      setTestingTelegram(false);
+    }
+  };
+
   const handleUpdate = async () => {
     setIndexing(true);
     try {
@@ -804,7 +790,25 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
         await indexKnowledgeBase(bot.id, editData.knowledgeBase);
       }
       toast.success('Bot configurations saved and re-indexed.');
-      // Removed reload, onSnapshot handles state update
+
+      // Automatically set up webhook with Telegram if enabled and token exists
+      if (editData.telegramEnabled && editData.telegramToken) {
+        try {
+          const res = await fetch(`/api/bots/${bot.id}/setup-telegram`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ origin: window.location.origin })
+          });
+          const setupResult = await res.json();
+          if (res.ok && setupResult.success) {
+            toast.success('Telegram Webhook auto-registered!');
+          } else {
+            toast.error(`Bot saved, but Telegram Webhook registration failed: ${setupResult.details || setupResult.error || 'Unknown error'}`);
+          }
+        } catch (setupErr) {
+          console.error("Error auto-registering Telegram webhook:", setupErr);
+        }
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to update bot configurations.');
@@ -857,7 +861,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
             )}
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-none">{bot.name}</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 tracking-tight leading-none">{bot.name}</h1>
             <div className="flex items-center gap-2 mt-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <p className="text-zinc-400 text-xs sm:text-sm">
@@ -985,53 +989,93 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">System Persona / Instructions</label>
-                  <textarea 
-                    value={editData.context}
-                    onChange={e => setEditData({...editData, context: e.target.value})}
-                    rows={3}
-                    className="w-full modern-input rounded-2xl p-5 text-zinc-200 leading-relaxed outline-none transition-all resize-none text-sm"
-                    placeholder="Describe how the assistant should behave..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Knowledge Base sources (RAG)</label>
-                  <textarea 
-                    value={editData.knowledgeBase}
-                    onChange={e => setEditData({...editData, knowledgeBase: e.target.value})}
-                    rows={8}
-                    placeholder="Paste context, documentation, or FAQs here to enable RAG..."
-                    className="w-full modern-input rounded-2xl p-5 text-zinc-200 leading-relaxed outline-none transition-all resize-none text-sm font-mono"
-                  />
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none mt-1">Compiled contents are tokenized and semantically queried during conversations.</p>
-                </div>
+                <div className="space-y-4 pt-4">
+                  <div className={cn(
+                    "border rounded-2xl overflow-hidden transition-all duration-300",
+                    isAdvancedConfigOpen ? "bg-zinc-950/40 border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.05)]" : "bg-zinc-950/20 border-zinc-800/60 hover:border-zinc-700 hover:bg-zinc-950/40"
+                  )}>
+                    <button 
+                      type="button"
+                      onClick={() => setIsAdvancedConfigOpen(!isAdvancedConfigOpen)}
+                      className={cn(
+                        "flex w-full items-center justify-between p-4 transition-all text-sm font-bold",
+                        isAdvancedConfigOpen ? "bg-indigo-500/5 text-white border-b border-zinc-800/50" : "bg-transparent text-zinc-400 hover:text-zinc-300"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "p-2 rounded-xl transition-all duration-300", 
+                          isAdvancedConfigOpen ? "bg-indigo-500/20 shadow-inner" : "bg-zinc-900"
+                        )}>
+                          <BotIcon className={cn("w-4 h-4 transition-colors", isAdvancedConfigOpen ? "text-indigo-400" : "text-zinc-500")} />
+                        </div>
+                        <span className="tracking-wide">Advanced Persona & Knowledge Setup</span>
+                      </div>
+                      <div className={cn(
+                        "transition-transform duration-300 flex items-center justify-center w-8 h-8 rounded-full", 
+                        isAdvancedConfigOpen ? "rotate-180 bg-indigo-500/10 text-indigo-400" : "text-zinc-500"
+                      )}>
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                    </button>
 
-                <div className="pt-2">
-                  <KnowledgeGraph 
-                    knowledgeBaseText={editData.knowledgeBase} 
-                    botName={bot.name || "Assistant Core AI"} 
-                  />
-                </div>
+                    {isAdvancedConfigOpen && (
+                      <div className="p-6 space-y-7 animate-fade-in">
+                        <div className="space-y-3">
+                          <label className="text-[11px] font-bold text-indigo-400/80 uppercase tracking-wider flex items-center gap-2">
+                            <BotIcon className="w-3 h-3" /> System Persona / Instructions
+                          </label>
+                          <textarea 
+                            value={editData.context}
+                            onChange={e => setEditData({...editData, context: e.target.value})}
+                            rows={3}
+                            className="w-full modern-input rounded-2xl p-5 text-zinc-200 leading-relaxed outline-none transition-all resize-none text-sm bg-zinc-900/50 border-zinc-800 focus:border-indigo-500/50 focus:bg-zinc-900"
+                            placeholder="Describe how the assistant should behave..."
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <label className="text-[11px] font-bold text-indigo-400/80 uppercase tracking-wider flex items-center gap-2">
+                            <BotIcon className="w-3 h-3" /> Knowledge Base sources (RAG)
+                          </label>
+                          <textarea 
+                            value={editData.knowledgeBase}
+                            onChange={e => setEditData({...editData, knowledgeBase: e.target.value})}
+                            rows={8}
+                            placeholder="Paste context, documentation, or FAQs here to enable RAG..."
+                            className="w-full modern-input rounded-2xl p-5 text-zinc-300 leading-relaxed outline-none transition-all resize-none text-sm font-mono bg-zinc-900/50 border-zinc-800 focus:border-indigo-500/50 focus:bg-zinc-900"
+                          />
+                          <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none mt-2 ml-1">Compiled contents are tokenized and semantically queried during conversations.</p>
+                        </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Agent Tone & Temperament</label>
-                    <div className="bg-zinc-950/40 border border-zinc-850 rounded-xl px-4 py-3.5 text-zinc-200 text-sm">{bot.tone}</div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Default Greeting Trigger</label>
-                    <div className="bg-zinc-950/40 border border-zinc-850 rounded-xl px-4 py-3.5 text-zinc-200 text-sm truncate">{bot.welcomeMessage}</div>
+                        <div className="pt-2">
+                          <KnowledgeGraph 
+                            knowledgeBaseText={editData.knowledgeBase} 
+                            botName={bot.name || "Assistant Core AI"} 
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2 border-t border-zinc-800/50 mt-4">
+                          <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Agent Tone & Temperament</label>
+                            <div className="bg-zinc-900 border border-zinc-800/80 rounded-xl px-5 py-4 text-zinc-300 text-sm font-medium shadow-inner">{bot.tone}</div>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Default Greeting Trigger</label>
+                            <div className="bg-zinc-900 border border-zinc-800/80 rounded-xl px-5 py-4 text-zinc-300 text-sm font-medium truncate shadow-inner">{bot.welcomeMessage}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="glass-effect border border-zinc-800/80 rounded-3xl p-8 space-y-6 shadow-xl">
-                <h3 className="text-lg font-bold text-white tracking-tight">Cognitive Capabilities</h3>
+                <h3 className="text-lg font-bold text-zinc-100 tracking-tight">Cognitive Capabilities</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center justify-between p-5 bg-zinc-950/30 border border-zinc-850 rounded-2xl hover:border-zinc-800 transition-all">
                     <div>
-                      <p className="text-sm font-bold text-white flex items-center gap-2">
+                      <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                         <Globe className="w-4 h-4 text-sky-400" />
                         Google Search Grounds
                       </p>
@@ -1050,7 +1094,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
 
                   <div className="flex items-center justify-between p-5 bg-zinc-950/30 border border-zinc-850 rounded-2xl hover:border-zinc-800 transition-all">
                     <div>
-                      <p className="text-sm font-bold text-white flex items-center gap-2">
+                      <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                         <BarChart3 className="w-4 h-4 text-purple-400" />
                         Deliberation Level
                       </p>
@@ -1059,7 +1103,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
                     <select 
                       value={editData.thinkingLevel}
                       onChange={e => setEditData({...editData, thinkingLevel: e.target.value as any})}
-                      className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-indigo-500 font-semibold cursor-pointer"
+                      className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-zinc-100 outline-none focus:border-indigo-500 font-semibold cursor-pointer"
                     >
                       <option value="LOW">Low Latency</option>
                       <option value="MEDIUM">Balanced</option>
@@ -1069,7 +1113,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
 
                   <div className="flex items-center justify-between p-5 bg-zinc-950/30 border border-zinc-850 rounded-2xl hover:border-zinc-800 transition-all">
                     <div>
-                      <p className="text-sm font-bold text-white flex items-center gap-2">
+                      <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                         <BotIcon className="w-4 h-4 text-emerald-400" />
                         Vision & Analytics Support
                       </p>
@@ -1088,7 +1132,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
 
                   <div className="flex items-center justify-between p-5 bg-zinc-950/30 border border-zinc-850 rounded-2xl hover:border-zinc-800 transition-all">
                     <div>
-                      <p className="text-sm font-bold text-white flex items-center gap-2">
+                      <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                         <FileText className="w-4 h-4 text-amber-400" />
                         Structured Document Parsing
                       </p>
@@ -1228,6 +1272,31 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
                         </button>
                       </div>
                     </div>
+                    
+                    <div className="pt-2 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                      <div className="text-xs text-zinc-400">
+                        Webhook will connect automatically on Save, or click to verify token.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSetupTelegramWebhook}
+                        disabled={testingTelegram}
+                        className="px-4 py-2 bg-indigo-650 hover:bg-indigo-600 disabled:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-[0.98]"
+                      >
+                        {testingTelegram ? 'Testing Token...' : 'Test & Activate Webhook'}
+                      </button>
+                    </div>
+
+                    <div className="mt-4 p-4 rounded-xl bg-zinc-950/40 border border-zinc-850 text-xs text-zinc-450 space-y-2">
+                      <p className="font-bold text-zinc-300">How to Setup Telegram Bot:</p>
+                      <ul className="list-decimal list-inside space-y-1">
+                        <li>Open Telegram and search for the official account <span className="text-zinc-200 font-mono font-bold">@BotFather</span></li>
+                        <li>Send the message <span className="text-zinc-200 font-mono">/newbot</span> and follow the instructions to choose a name and username</li>
+                        <li>Copy the generated HTTP API Access Token and paste it above</li>
+                        <li>Click <span className="text-zinc-200 font-bold">Test & Activate Webhook</span> above or <span className="text-zinc-200 font-bold">Save Configurations</span> to complete</li>
+                        <li>Direct message your bot on Telegram to receive intelligent assistance</li>
+                      </ul>
+                    </div>
                   </motion.div>
                 )}
               </div>
@@ -1290,7 +1359,7 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
                         className="w-full modern-input rounded-xl px-4 py-3 text-white outline-none focus:border-green-500 font-mono text-sm leading-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                     <div className="space-y-2">
                       <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Meta Callback Endpoints</label>
                       <div className="bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-zinc-400 text-sm font-mono flex items-center justify-between">
                         <span className="truncate select-all select-none">{`${window.location.origin}/api/webhooks/whatsapp`}</span>
@@ -1304,6 +1373,18 @@ const BotDetail = ({ bot: initialBot, onBack }: { bot: Bot, onBack: () => void }
                           Copy URL
                         </button>
                       </div>
+                    </div>
+
+                    <div className="mt-4 p-4 rounded-xl bg-zinc-950/40 border border-zinc-850 text-xs text-zinc-450 space-y-2">
+                      <p className="font-bold text-zinc-300">How to Setup WhatsApp integration:</p>
+                      <ul className="list-decimal list-inside space-y-1">
+                        <li>Register a Meta Developer account at <span className="text-zinc-200 font-mono font-bold">developers.facebook.com</span></li>
+                        <li>Create an "Other" / "Business" app and add the <span className="text-zinc-200 font-bold">WhatsApp</span> product</li>
+                        <li>In the API Setup section, copy the <span className="text-zinc-200 font-mono font-bold">Phone Number ID</span> and paste it above</li>
+                        <li>Generate a permanent <span className="text-zinc-200 font-bold">System User Access Token</span> with permissions (<span className="text-zinc-200 font-mono text-[10px]">whatsapp_business_messaging</span>), and paste it into the <span className="text-zinc-200 font-bold">Secure Access Token</span> input</li>
+                        <li>Design a secret key under <span className="text-zinc-200 font-bold">Custom verify Token</span> above</li>
+                        <li>In Meta Portal under WhatsApp Webhooks, paste the Callback Endpoints URL and the Verify Token. Subscribe to the <span className="text-indigo-400 font-semibold">messages</span> webhook topic to complete subscription.</li>
+                      </ul>
                     </div>
                   </motion.div>
                 )}
@@ -1500,7 +1581,7 @@ const ChatLogsView = () => {
   return (
     <div className="max-w-6xl mx-auto h-[calc(100vh-100px)] flex flex-col">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">Chat Logs</h1>
+        <h1 className="text-4xl font-bold text-zinc-100 mb-2">Chat Logs</h1>
         <p className="text-zinc-500">Review conversations across all your bots.</p>
       </div>
 
@@ -1568,6 +1649,17 @@ const ChatLogsView = () => {
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-zinc-950/50">
+                {messages.length === 0 && (
+                  <div className="h-full flex flex-col items-center justify-center space-y-4 pb-12">
+                    <div className="w-16 h-16 rounded-3xl bg-zinc-800 flex items-center justify-center">
+                      <MessageSquare className="w-8 h-8 text-zinc-500" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-zinc-200 font-bold mb-1">No messages yet</h3>
+                      <p className="text-zinc-500 text-sm">Send a message to start the conversation.</p>
+                    </div>
+                  </div>
+                )}
                 {messages.map((msg, i) => (
                   <div 
                     key={i}
@@ -1577,10 +1669,10 @@ const ChatLogsView = () => {
                     )}
                   >
                     <div className={cn(
-                      "max-w-[80%] p-4 rounded-2xl text-sm",
+                      "max-w-[80%] px-5 py-3.5 rounded-[20px] text-[14px] shadow-sm leading-relaxed",
                       msg.role === 'user' 
-                        ? "bg-indigo-600 text-white rounded-tr-none" 
-                        : "bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-tl-none"
+                        ? "bg-zinc-800 text-white rounded-br-[6px]" 
+                        : "bg-white text-zinc-800 border border-slate-200/60 rounded-tl-[6px]"
                     )}>
                       {msg.attachments && msg.attachments.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-3">
@@ -1627,6 +1719,31 @@ const APIKeysSettings = () => {
     deepseekKey: localStorage.getItem('compare_key_deepseek') || '',
   });
 
+  const [serverKeysStatus, setServerKeysStatus] = useState<Record<string, boolean>>({
+    geminiKey: false,
+    openaiKey: false,
+    anthropicKey: false,
+    groqKey: false,
+    deepseekKey: false,
+  });
+
+  useEffect(() => {
+    fetch('/api/keys-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setServerKeysStatus({
+            geminiKey: !!data.geminiKey,
+            openaiKey: !!data.openaiKey,
+            anthropicKey: !!data.anthropicKey,
+            groqKey: !!data.groqKey,
+            deepseekKey: !!data.deepseekKey,
+          });
+        }
+      })
+      .catch(err => console.warn('Failed to fetch server credentials status:', err));
+  }, []);
+
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
 
   const handleSaveKeys = () => {
@@ -1647,9 +1764,9 @@ const APIKeysSettings = () => {
   ];
 
   return (
-    <div className="pt-8 border-t border-zinc-800 space-y-6">
+    <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
           <KeyRound className="w-5 h-5 text-indigo-400" />
           <span>API Credentials Settings</span>
         </h3>
@@ -1657,31 +1774,41 @@ const APIKeysSettings = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {keyConfigs.map((cfg) => (
-          <div key={cfg.id} className="space-y-2 bg-zinc-950/40 border border-zinc-850/60 p-5 rounded-2xl shadow-sm hover:border-zinc-800 transition-all">
-            <div className="flex justify-between items-center">
-              <div>
-                <label className="text-xs font-semibold text-zinc-300 tracking-wide uppercase">{cfg.label}</label>
-                <p className="text-[10px] text-zinc-500 leading-snug mt-0.5">{cfg.desc}</p>
+        {keyConfigs.map((cfg) => {
+          const hasLocalKey = !!keys[cfg.id as keyof typeof keys];
+          return (
+            <div key={cfg.id} className="space-y-2 bg-zinc-950/40 border border-zinc-850/60 p-5 rounded-2xl shadow-sm hover:border-zinc-800 transition-all">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs font-semibold text-zinc-300 tracking-wide uppercase">{cfg.label}</label>
+                    {serverKeysStatus[cfg.id] && !hasLocalKey && (
+                      <span className="text-[8px] text-emerald-400 font-extrabold select-none uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded animate-pulse">
+                        ● Server Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-zinc-500 leading-snug mt-0.5">{cfg.desc}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowKeys(prev => ({ ...prev, [cfg.id]: !prev[cfg.id] }))}
+                  className="text-zinc-500 hover:text-zinc-300 text-[10px] flex items-center gap-1 cursor-pointer select-none"
+                >
+                  {showKeys[cfg.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{showKeys[cfg.id] ? 'Hide' : 'Show'}</span>
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowKeys(prev => ({ ...prev, [cfg.id]: !prev[cfg.id] }))}
-                className="text-zinc-500 hover:text-zinc-300 text-[10px] flex items-center gap-1 cursor-pointer select-none"
-              >
-                {showKeys[cfg.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                <span>{showKeys[cfg.id] ? 'Hide' : 'Show'}</span>
-              </button>
+              <input
+                type={showKeys[cfg.id] ? 'text' : 'password'}
+                placeholder={serverKeysStatus[cfg.id] && !hasLocalKey ? "Using automatically loaded server key..." : `Enter custom ${cfg.label}...`}
+                value={keys[cfg.id as keyof typeof keys]}
+                onChange={e => setKeys(prev => ({ ...prev, [cfg.id]: e.target.value }))}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-200 outline-none transition-all font-mono placeholder-zinc-700 focus:border-indigo-500"
+              />
             </div>
-            <input
-              type={showKeys[cfg.id] ? 'text' : 'password'}
-              placeholder={`Enter custom ${cfg.label}...`}
-              value={keys[cfg.id as keyof typeof keys]}
-              onChange={e => setKeys(prev => ({ ...prev, [cfg.id]: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-200 outline-none transition-all font-mono placeholder-zinc-700 focus:border-indigo-500"
-            />
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="flex justify-end pt-2">
@@ -1703,9 +1830,19 @@ export default function App() {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null);
 
+  const [showPostLogin, setShowPostLogin] = useState(false);
+  const prevUserRef = React.useRef<any>(null);
+
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    if (!prevUserRef.current && user) {
+      setShowPostLogin(true);
+    }
+    prevUserRef.current = user;
+  }, [user]);
 
   if (!initialized || loading) {
     return (
@@ -1724,17 +1861,26 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-4xl font-bold text-white tracking-tight">Build Smarter Bots</h1>
-            <p className="text-zinc-500 mt-3 text-lg">The AI-first chatbot platform that learns from every conversation.</p>
+            <p className="text-zinc-550 mt-3 text-lg font-medium leading-relaxed">The AI-first chatbot platform that learns from every conversation.</p>
           </div>
           <button 
             onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
-            className="w-full bg-white text-black hover:bg-zinc-200 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3"
+            className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-md hover:shadow-indigo-505/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
-            <Globe className="w-5 h-5" />
+            <Globe className="w-5 h-5 text-white" />
             Continue with Google
           </button>
         </div>
       </div>
+    );
+  }
+
+  if (showPostLogin) {
+    return (
+      <PostLoginLoader 
+        userEmail={user.email} 
+        onComplete={() => setShowPostLogin(false)} 
+      />
     );
   }
 
@@ -1765,25 +1911,97 @@ export default function App() {
               exit={{ opacity: 0, x: -20 }}
               className="max-w-6xl mx-auto"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-zinc-850">
+              <div className="mb-10 pb-6 border-b border-zinc-850 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">My AI Agents</h1>
+                  <h1 className="text-3xl font-extrabold text-zinc-100 tracking-tight sm:text-4xl">My AI Agents</h1>
+                  <p className="text-zinc-500 text-xs mt-1.5 font-medium">Assembled neural models and specialized agents catalog.</p>
                 </div>
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold transition-all text-xs cursor-pointer shadow-lg hover:shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center gap-2 self-start sm:self-center"
+                >
+                  <Plus className="w-4 h-4" />
+                  Assemble Agent
+                </button>
               </div>
 
               {bots.length === 0 ? (
-                <div className="glass-effect rounded-3xl p-16 text-center border border-zinc-800/80 flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-2xl flex items-center justify-center mb-6">
-                    <BotIcon className="w-7 h-7" />
+                <div className="relative overflow-hidden rounded-3xl p-16 text-center border border-zinc-800/60 bg-zinc-950/25 shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center min-h-[440px]">
+                  {/* Highly attractive ambient background blobs and visual networks */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.15, 0.9, 1],
+                        x: [0, 25, -15, 0],
+                        y: [0, -15, 20, 0],
+                      }}
+                      transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-indigo-500/5 blur-[60px]"
+                    />
+                    <motion.div
+                      animate={{
+                        scale: [1, 0.9, 1.1, 1],
+                        x: [0, -30, 15, 0],
+                        y: [0, 20, -15, 0],
+                      }}
+                      transition={{
+                        duration: 15,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 rounded-full bg-sky-500/5 blur-[80px]"
+                    />
+                    
+                    {/* Simulated visual tech grid mapping */}
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#3f3f4608_1px,transparent_1px),linear-gradient(to_bottom,#3f3f4608_1px,transparent_1px)] bg-[size:32px_32px] opacity-40" />
+                    
+                    {/* Floating circuitry connection sparks */}
+                    <div className="absolute inset-x-0 top-0 bottom-0">
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ 
+                            opacity: 0, 
+                            scale: 0.5,
+                            x: 120 + i * 50, 
+                            y: 220 
+                          }}
+                          animate={{ 
+                            opacity: [0, 0.5, 0.5, 0],
+                            y: [260, 40],
+                            x: [100 + i * 60, 140 + i * 40]
+                          }}
+                          transition={{ 
+                            duration: 6 + i * 1.5, 
+                            repeat: Infinity, 
+                            delay: i * 1.4,
+                            ease: "easeInOut" 
+                          }}
+                          className="absolute w-1.5 h-1.5 rounded-full bg-indigo-400/40 blur-[0.5px] shadow-[0_0_8px_rgba(129,140,248,0.5)]"
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">No agents active</h3>
-                  <p className="text-zinc-450 mb-8 max-w-md mx-auto text-sm leading-relaxed">Assemble and configure your first AI agent. Connect dynamic knowledge bases, set tailored system instructions, and power continuous interactions.</p>
-                  <button 
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-bold transition-all text-sm cursor-pointer shadow-lg hover:shadow-indigo-600/20 active:scale-[0.98]"
-                  >
-                    Assemble Your First Agent
-                  </button>
+
+                  {/* Visual Content Layer */}
+                  <div className="relative z-10 flex flex-col items-center justify-center">
+                    <InteractiveBot />
+                    <h3 className="text-2xl font-bold text-zinc-100 mb-2 tracking-tight mt-4">No agents active</h3>
+                    <p className="text-zinc-400 max-w-sm mt-1.5 mb-6 text-xs leading-relaxed font-medium">
+                      Hover and click our friendly neural guide above to fire off sparkle micro-pulses! Let&apos;s assemble your pristine multi-model configuration.
+                    </p>
+                    <button
+                      onClick={() => setIsCreateModalOpen(true)}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-bold transition-all text-sm cursor-pointer shadow-lg hover:shadow-indigo-600/20 active:scale-[0.98] flex items-center gap-2"
+                    >
+                      <Plus className="w-4.5 h-4.5" />
+                      Create Your First Bot
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1795,6 +2013,28 @@ export default function App() {
                       onDelete={(botId, botName) => setDeleteTarget({ id: botId, name: botName })}
                     />
                   ))}
+                  
+                  {/* Dashed Create Bot Card Placeholder */}
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className={cn(
+                      "group relative flex flex-col items-center justify-center h-full min-h-[240px] rounded-2xl p-6 transition-all duration-300 cursor-pointer text-center select-none",
+                      "bg-zinc-900/10 hover:bg-zinc-900/30 border-2 border-dashed border-zinc-800/80 hover:border-indigo-500/40",
+                      "shadow-none hover:shadow-indigo-500/5 hover:-translate-y-1 overflow-hidden"
+                    )}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800/60 flex items-center justify-center text-zinc-500 group-hover:text-indigo-400 group-hover:border-indigo-500/30 transition-all duration-300 shadow-sm">
+                      <Plus className="w-5.5 h-5.5 transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                    <div className="mt-4 space-y-1">
+                      <div className="text-sm font-bold text-zinc-300 group-hover:text-zinc-100 transition-colors duration-300">Assemble New Agent</div>
+                      <p className="text-[11px] text-zinc-500 group-hover:text-zinc-400 max-w-[200px] mx-auto leading-normal transition-colors duration-300">
+                        Define reasoning levels, live search capabilities, and custom system prompt.
+                      </p>
+                    </div>
+                  </button>
+
                   <ConfirmDeleteModal 
                     isOpen={deleteTarget !== null}
                     onClose={() => setDeleteTarget(null)}
@@ -1831,10 +2071,10 @@ export default function App() {
               key="redteam"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="max-w-6xl mx-auto"
+              exit={{ opacity: 0, y: -20 }}
+              className="flex-1 w-full h-full overflow-y-auto"
             >
-              <RedTeamingSandbox onBotUpdated={fetchBots} />
+              <DiagnosticHub />
             </motion.div>
           ) : (
             <motion.div 
@@ -1844,17 +2084,8 @@ export default function App() {
               exit={{ opacity: 0, x: -20 }}
               className="max-w-6xl mx-auto"
             >
-              <h1 className="text-4xl font-bold text-white mb-12">Settings</h1>
+              <h1 className="text-3xl font-extrabold text-zinc-100 tracking-tight sm:text-4xl mb-12">Settings</h1>
               <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 space-y-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-white">Subscription Plan</h3>
-                    <p className="text-zinc-500 text-sm">You are currently on the {user.plan} plan.</p>
-                  </div>
-                  <button className="bg-white text-black px-6 py-2 rounded-xl font-bold hover:bg-zinc-200 transition-all">
-                    Upgrade to Pro
-                  </button>
-                </div>
                 <APIKeysSettings />
               </div>
             </motion.div>
