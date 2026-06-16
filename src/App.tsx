@@ -78,7 +78,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(79,70,229,0.3)]">
             <Zap className="w-4.5 h-4.5" />
           </div>
-          {!isCollapsed && <span className="animate-fade-in tracking-tight font-extrabold text-zinc-100">BotAI</span>}
+          {!isCollapsed && <span className="animate-fade-in tracking-tight font-extrabold text-zinc-100">AuditBot Arena</span>}
         </div>
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
