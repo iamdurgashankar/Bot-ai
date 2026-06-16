@@ -1747,6 +1747,13 @@ const APIKeysSettings = () => {
             groqKey: !!data.groqKey,
             deepseekKey: !!data.deepseekKey,
           });
+          setKeys(prev => ({
+            geminiKey: prev.geminiKey || data.geminiKeyValue || '',
+            openaiKey: prev.openaiKey || data.openaiKeyValue || '',
+            anthropicKey: prev.anthropicKey || data.anthropicKeyValue || '',
+            groqKey: prev.groqKey || data.groqKeyValue || '',
+            deepseekKey: prev.deepseekKey || data.deepseekKeyValue || '',
+          }));
         }
       })
       .catch(err => console.warn('Failed to fetch server credentials status:', err));
